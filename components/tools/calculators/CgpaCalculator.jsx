@@ -370,8 +370,9 @@ export function CgpaCalculator({
               </div>
             </div>
 
-            <div className="space-y-3">
-              {courses.map((course, idx) => (
+            <div className="overflow-x-auto pb-2">
+              <div className="min-w-[460px] sm:min-w-0 space-y-3">
+                {courses.map((course, idx) => (
                 <div
                   key={course.id}
                   className="grid grid-cols-12 gap-3 items-center p-3 rounded-2xl bg-slate-50 border border-slate-200/80"
@@ -426,6 +427,7 @@ export function CgpaCalculator({
                   </div>
                 </div>
               ))}
+              </div>
             </div>
           </div>
         )}

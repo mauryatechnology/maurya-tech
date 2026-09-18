@@ -78,6 +78,7 @@ export function ResumeBuilder({
 }) {
   const [profile, setProfile] = useState(SAMPLE_PROFILE);
   const [activeTab, setActiveTab] = useState('personal'); // 'personal', 'experience', 'education', 'skills', 'projects'
+  const [mobileView, setMobileView] = useState('edit'); // 'edit' or 'preview' on small viewports
 
   const handlePrint = () => {
     window.print();
@@ -238,10 +239,40 @@ export function ResumeBuilder({
           </button>
         </div>
 
+        {/* Mobile View Switcher */}
+        <div className="flex lg:hidden p-1 bg-slate-100 rounded-xl border border-slate-200">
+          <button
+            type="button"
+            onClick={() => setMobileView('edit')}
+            className={`flex-1 py-2 text-xs font-semibold rounded-lg transition cursor-pointer ${
+              mobileView === 'edit'
+                ? 'bg-white text-slate-900 shadow-xs'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            Edit Resume Details
+          </button>
+          <button
+            type="button"
+            onClick={() => setMobileView('preview')}
+            className={`flex-1 py-2 text-xs font-semibold rounded-lg transition cursor-pointer ${
+              mobileView === 'preview'
+                ? 'bg-white text-slate-900 shadow-xs'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            Live Resume Sheet Preview
+          </button>
+        </div>
+
         {/* Split Screen: Left Editor, Right Live Preview */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Left Editor Controls */}
-          <div className="lg:col-span-6 bg-white border border-slate-200/90 rounded-3xl p-6 shadow-xs space-y-5">
+          <div
+            className={`lg:col-span-6 bg-white border border-slate-200/90 rounded-3xl p-6 shadow-xs space-y-5 ${
+              mobileView === 'preview' ? 'hidden lg:block' : 'block'
+            }`}
+          >
             {/* Editor Tabs */}
             <div className="flex flex-wrap gap-1.5 border-b border-slate-100 pb-3">
               {[
@@ -576,7 +607,28 @@ export function ResumeBuilder({
           </div>
 
           {/* Right Live Resume Sheet (Printable A4 preview) */}
-          <div className="lg:col-span-6 w-full">
+          <div className={`lg:col-span-6 w-full ${mobileView === 'edit' ? 'hidden lg:block' : 'block'}`}>
+            <style>{`
+              @media print {
+                body * {
+                  visibility: hidden !important;
+                }
+                #printable-resume, #printable-resume * {
+                  visibility: visible !important;
+                }
+                #printable-resume {
+                  position: absolute !important;
+                  left: 0 !important;
+                  top: 0 !important;
+                  width: 100% !important;
+                  max-width: 100% !important;
+                  margin: 0 !important;
+                  padding: 20mm !important;
+                  border: none !important;
+                  box-shadow: none !important;
+                }
+              }
+            `}</style>
             <div
               id="printable-resume"
               className="bg-white border border-slate-300 rounded-3xl p-8 sm:p-10 shadow-lg text-slate-900 font-sans space-y-6 max-w-2xl mx-auto"

@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -16,7 +17,15 @@ const AdDialog = ({ ad, onClose, open }) => {
         <DialogTitle className="sr-only">{ad.content.headline}</DialogTitle>
         <div className={`p-8 ${ad.style.showGradient ? 'bg-gradient-to-br from-primary via-primary to-accent/20' : 'bg-card'}`}>
           {ad.style.showImage && ad.content.imageUrl && (
-            <img src={ad.content.imageUrl} alt="" className="w-full h-40 object-cover rounded-lg mb-6" />
+            <div className="relative w-full h-40 rounded-lg overflow-hidden mb-6 bg-muted">
+              <Image
+                src={ad.content.imageUrl}
+                alt={ad.content.headline || 'Sponsored'}
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 500px"
+              />
+            </div>
           )}
           <h3 className="text-2xl font-heading font-bold text-foreground mb-3">
             {ad.content.headline}

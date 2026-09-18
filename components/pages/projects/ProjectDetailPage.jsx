@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { Layout } from '@/components/layout';
 import { projects } from '@/data/projects';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -317,7 +318,13 @@ export const ProjectDetailPage = ({ project: serverProject }) => {
                                     <div className="absolute top-0 inset-x-0 h-6 bg-black z-10 rounded-t-[2.5rem]">
                                         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-20 h-5 bg-black rounded-b-xl" />
                                     </div>
-                                    <img src={img} alt="Mobile View" className="w-[260px] h-[540px] object-cover" />
+                                    <Image
+                                        src={img}
+                                        alt="Mobile View"
+                                        width={260}
+                                        height={540}
+                                        className="w-[260px] h-[540px] object-cover"
+                                    />
                                 </div>
                             ))}
                         </motion.div>

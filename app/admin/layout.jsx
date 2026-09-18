@@ -22,6 +22,7 @@ import {
   ShoppingBag,
   Zap,
   History,
+  DollarSign,
 } from 'lucide-react';
 
 const NAV_ITEMS = [
@@ -29,6 +30,7 @@ const NAV_ITEMS = [
   { name: 'Markets & Geo', href: '/admin/markets', icon: Globe },
   { name: 'Interactive Tools', href: '/admin/tools', icon: Wrench },
   { name: 'Digital Orders', href: '/admin/orders', icon: ShoppingBag },
+  { name: 'Monetization & Ads', href: '/admin/monetization', icon: DollarSign },
   { name: 'Automation Rules', href: '/admin/automation', icon: Zap },
   { name: 'Audit Trail', href: '/admin/audit', icon: History },
   { name: 'Job Applications', href: '/admin/applications', icon: Users },

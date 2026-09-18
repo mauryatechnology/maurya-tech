@@ -198,13 +198,22 @@ export default function AdminBlogsPage() {
             Write, edit, and publish technical insights, SaaS case studies, and engineering blogs
           </p>
         </div>
-        <button
-          onClick={openCreateModal}
-          className="px-4 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold text-xs flex items-center gap-2 transition shadow-lg shadow-cyan-500/20 cursor-pointer w-fit"
-        >
-          <PlusCircle className="w-4 h-4" />
-          <span>Write New Article</span>
-        </button>
+        <div className="flex items-center gap-3">
+          <Link
+            href="/admin/automation"
+            className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-bold text-xs flex items-center gap-2 transition shadow-lg shadow-emerald-500/20 cursor-pointer"
+          >
+            <Zap className="w-4 h-4 text-slate-950" />
+            <span>AI Content Studio</span>
+          </Link>
+          <button
+            onClick={openCreateModal}
+            className="px-4 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold text-xs flex items-center gap-2 transition shadow-lg shadow-cyan-500/20 cursor-pointer w-fit"
+          >
+            <PlusCircle className="w-4 h-4" />
+            <span>Write New Article</span>
+          </button>
+        </div>
       </div>
 
       {/* Status Filter Tabs */}

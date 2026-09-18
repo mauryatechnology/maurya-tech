@@ -25,6 +25,19 @@ export default function AdminAutomationPage() {
   const [triggerLoading, setTriggerLoading] = useState(null);
   const [feedback, setFeedback] = useState(null);
 
+  // Content Studio State
+  const [isStudioOpen, setIsStudioOpen] = useState(false);
+  const [studioLoading, setStudioLoading] = useState(false);
+  const [studioResult, setStudioResult] = useState(null);
+  const [studioForm, setStudioForm] = useState({
+    topic: '',
+    country: 'IN',
+    category: 'Technology',
+    targetKeyword: '',
+    clusterType: 'spoke',
+    relatedToolSlug: '',
+  });
+
   const [formData, setFormData] = useState({
     name: '',
     country: 'IN',
@@ -107,16 +120,59 @@ export default function AdminAutomationPage() {
     }
   };
 
-  const handleSimulateRun = async (ruleId) => {
-    setTriggerLoading(ruleId);
+  const handleSimulateRun = async (rule) => {
+    setTriggerLoading(rule._id);
     setFeedback(null);
-    setTimeout(() => {
-      setTriggerLoading(null);
-      setFeedback({
-        type: 'success',
-        message: 'Rule triggered: Generated content draft routed to Quality Gate in "In Review" status.',
+    try {
+      const res = await fetch('/api/automation/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          topic: `${rule.name} - Complete 2026 Guide`,
+          country: rule.country,
+          category: rule.category,
+          targetKeyword: rule.targetKeywords?.[0] || rule.name,
+          clusterType: rule.clusterType,
+          relatedToolSlug: rule.relatedToolSlug,
+        }),
       });
-    }, 1200);
+      const data = await res.json();
+      if (data.success) {
+        setFeedback({
+          type: 'success',
+          message: `Generated draft "${data.slug}"! Placed in "In Review" queue with Quality Gate score ${data.qualityGate?.score}/100.`,
+        });
+      } else {
+        setFeedback({ type: 'error', message: data.error || 'Failed to generate draft.' });
+      }
+    } catch (err) {
+      setFeedback({ type: 'error', message: 'Generation request failed.' });
+    } finally {
+      setTriggerLoading(null);
+    }
+  };
+
+  const handleStudioGenerate = async (e) => {
+    e.preventDefault();
+    setStudioLoading(true);
+    setStudioResult(null);
+    try {
+      const res = await fetch('/api/automation/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(studioForm),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setStudioResult(data);
+      } else {
+        alert(data.error || 'Generation failed.');
+      }
+    } catch (err) {
+      alert('Network error requesting generation.');
+    } finally {
+      setStudioLoading(false);
+    }
   };
 
   return (
@@ -126,32 +182,44 @@ export default function AdminAutomationPage() {
         <div>
           <h1 className="text-2xl md:text-3xl font-bold font-heading text-white flex items-center gap-3">
             <Zap className="w-8 h-8 text-cyan-400" />
-            Content Automation Rules
+            Content Automation Studio
           </h1>
           <p className="text-slate-400 text-sm mt-1">
-            Programmatic content rules, topic clustering triggers, and AI-assisted drafts with strict Quality Gate compliance
+            Programmatic content engine, topic clustering schedules, and interactive AI draft generator
           </p>
         </div>
-        <button
-          onClick={() => {
-            setFormData({
-              name: '',
-              country: 'IN',
-              category: 'Engineering',
-              clusterType: 'spoke',
-              targetKeywords: '',
-              aiProvider: 'none',
-              mode: 'assisted_review',
-              relatedToolSlug: '',
-              enabled: true,
-            });
-            setIsModalOpen(true);
-          }}
-          className="px-4 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs flex items-center gap-2 transition shadow-lg shadow-cyan-500/20 cursor-pointer self-start sm:self-auto"
-        >
-          <PlusCircle className="w-4 h-4" />
-          <span>Add Automation Rule</span>
-        </button>
+        <div className="flex items-center gap-3 self-start sm:self-auto">
+          <button
+            onClick={() => {
+              setStudioResult(null);
+              setIsStudioOpen(true);
+            }}
+            className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-bold text-xs flex items-center gap-2 transition shadow-lg shadow-emerald-500/20 cursor-pointer"
+          >
+            <Sparkles className="w-4 h-4 text-slate-950" />
+            <span>AI Content Studio</span>
+          </button>
+          <button
+            onClick={() => {
+              setFormData({
+                name: '',
+                country: 'IN',
+                category: 'Engineering',
+                clusterType: 'spoke',
+                targetKeywords: '',
+                aiProvider: 'none',
+                mode: 'assisted_review',
+                relatedToolSlug: '',
+                enabled: true,
+              });
+              setIsModalOpen(true);
+            }}
+            className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs flex items-center gap-2 transition cursor-pointer border border-slate-700"
+          >
+            <PlusCircle className="w-4 h-4" />
+            <span>Add Rule</span>
+          </button>
+        </div>
       </div>
 
       {/* Safety Policy Alert Banner */}
@@ -389,6 +457,194 @@ export default function AdminAutomationPage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* AI Content Studio Modal */}
+      {isStudioOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm overflow-y-auto">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-xl p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">
+                  <Sparkles className="w-4 h-4" />
+                </div>
+                <h2 className="font-heading font-bold text-base text-white">
+                  AI Content Studio — Instant Draft Generator
+                </h2>
+              </div>
+              <button
+                onClick={() => setIsStudioOpen(false)}
+                className="text-slate-400 hover:text-white"
+              >
+                &times;
+              </button>
+            </div>
+
+            {studioResult ? (
+              <div className="p-5 rounded-2xl bg-emerald-950/30 border border-emerald-500/40 text-emerald-300 space-y-4">
+                <div className="flex items-center gap-2 text-sm font-bold text-white">
+                  <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+                  <span>Draft Generated & Passed Quality Gate!</span>
+                </div>
+                <div className="text-xs text-slate-300 space-y-1">
+                  <div>
+                    <span className="text-slate-400">Article Slug:</span>{' '}
+                    <code className="font-mono text-cyan-300">{studioResult.slug}</code>
+                  </div>
+                  <div>
+                    <span className="text-slate-400">Quality Gate Score:</span>{' '}
+                    <span className="font-bold text-white">
+                      {studioResult.qualityGate?.score}/100 ({studioResult.qualityGate?.status})
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-slate-400">Status:</span> Placed in{' '}
+                    <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold uppercase text-[10px]">
+                      In Review
+                    </span>{' '}
+                    (Human approval required before live publish).
+                  </div>
+                </div>
+
+                <div className="pt-2 flex items-center gap-3">
+                  <a
+                    href="/admin/blogs"
+                    className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 transition shadow-lg shadow-emerald-500/20"
+                  >
+                    <span>Open in Blog CMS to Review & Publish</span>
+                  </a>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setStudioResult(null);
+                      setStudioForm({ ...studioForm, topic: '', targetKeyword: '' });
+                    }}
+                    className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold"
+                  >
+                    Generate Another
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <form onSubmit={handleStudioGenerate} className="space-y-3 text-xs">
+                <div>
+                  <label className="block text-slate-300 font-semibold mb-1">
+                    Article Topic / Working Title
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={studioForm.topic}
+                    onChange={(e) => setStudioForm({ ...studioForm, topic: e.target.value })}
+                    placeholder="e.g. Complete Guide to US Tech Salaries: W2 vs 1099"
+                    className="w-full p-2.5 rounded-xl bg-slate-800 border border-slate-700 text-slate-100 focus:outline-none focus:border-emerald-500"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-slate-300 font-semibold mb-1">Target Market</label>
+                    <select
+                      value={studioForm.country}
+                      onChange={(e) => setStudioForm({ ...studioForm, country: e.target.value })}
+                      className="w-full p-2.5 rounded-xl bg-slate-800 border border-slate-700 text-slate-100 focus:outline-none focus:border-emerald-500"
+                    >
+                      <option value="IN">🇮🇳 India (/in)</option>
+                      <option value="US">🇺🇸 USA (/us)</option>
+                      <option value="UK">🇬🇧 UK (/uk)</option>
+                      <option value="GLOBAL">🌐 Global</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-slate-300 font-semibold mb-1">Category</label>
+                    <select
+                      value={studioForm.category}
+                      onChange={(e) => setStudioForm({ ...studioForm, category: e.target.value })}
+                      className="w-full p-2.5 rounded-xl bg-slate-800 border border-slate-700 text-slate-100 focus:outline-none focus:border-emerald-500"
+                    >
+                      <option value="Technology">Technology</option>
+                      <option value="Engineering">Engineering</option>
+                      <option value="Finance">Finance</option>
+                      <option value="SaaS">SaaS</option>
+                      <option value="Careers">Careers</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-slate-300 font-semibold mb-1">Cluster Type</label>
+                    <select
+                      value={studioForm.clusterType}
+                      onChange={(e) => setStudioForm({ ...studioForm, clusterType: e.target.value })}
+                      className="w-full p-2.5 rounded-xl bg-slate-800 border border-slate-700 text-slate-100 focus:outline-none focus:border-emerald-500"
+                    >
+                      <option value="spoke">Spoke Article</option>
+                      <option value="pillar">Pillar Hub Guide</option>
+                      <option value="tool_guide">Calculator Companion</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-slate-300 font-semibold mb-1">Companion Tool</label>
+                    <select
+                      value={studioForm.relatedToolSlug}
+                      onChange={(e) => setStudioForm({ ...studioForm, relatedToolSlug: e.target.value })}
+                      className="w-full p-2.5 rounded-xl bg-slate-800 border border-slate-700 text-slate-100 focus:outline-none focus:border-emerald-500"
+                    >
+                      <option value="">None (General)</option>
+                      <option value="ctc-calculator">CTC to In-Hand Calculator</option>
+                      <option value="hourly-to-annual-salary">Hourly to Annual Salary</option>
+                      <option value="emi-calculator">Loan EMI Calculator</option>
+                      <option value="resume-builder">Resume & CV Builder</option>
+                      <option value="freelance-rate-calculator">Freelance Rate Calculator</option>
+                      <option value="cgpa-calculator">CGPA & GPA Calculator</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-slate-300 font-semibold mb-1">
+                    Primary SEO Target Keyword
+                  </label>
+                  <input
+                    type="text"
+                    value={studioForm.targetKeyword}
+                    onChange={(e) => setStudioForm({ ...studioForm, targetKeyword: e.target.value })}
+                    placeholder="e.g. w2 vs 1099 tax rate"
+                    className="w-full p-2.5 rounded-xl bg-slate-800 border border-slate-700 text-slate-100 focus:outline-none focus:border-emerald-500"
+                  />
+                </div>
+
+                <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-800">
+                  <button
+                    type="button"
+                    onClick={() => setIsStudioOpen(false)}
+                    className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 font-medium cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={studioLoading}
+                    className="px-5 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-bold flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                  >
+                    {studioLoading ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin text-slate-950" />
+                        <span>Generating Draft...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-4 h-4 text-slate-950" />
+                        <span>Generate Draft</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </form>
+            )}
           </div>
         </div>
       )}
