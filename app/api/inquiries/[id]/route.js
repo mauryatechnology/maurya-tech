@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/mongodb';
 import Inquiry from '@/lib/models/Inquiry';
-import { verifyToken } from '@/lib/auth';
+import { verifyToken, hasPermission, ROLES } from '@/lib/auth';
 
 export async function GET(req, { params }) {
   try {
@@ -9,6 +9,9 @@ export async function GET(req, { params }) {
     const authUser = await verifyToken(token);
     if (!authUser) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
+    if (!hasPermission(authUser.role, ROLES.ADMIN)) {
+      return NextResponse.json({ message: 'Forbidden: Insufficient privileges' }, { status: 403 });
     }
 
     const { id } = await params;
@@ -33,6 +36,9 @@ export async function PUT(req, { params }) {
     if (!authUser) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
+    if (!hasPermission(authUser.role, ROLES.ADMIN)) {
+      return NextResponse.json({ message: 'Forbidden: Insufficient privileges' }, { status: 403 });
+    }
 
     const { id } = await params;
     const body = await req.json();
@@ -56,6 +62,9 @@ export async function DELETE(req, { params }) {
     const authUser = await verifyToken(token);
     if (!authUser) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
+    if (!hasPermission(authUser.role, ROLES.ADMIN)) {
+      return NextResponse.json({ message: 'Forbidden: Insufficient privileges' }, { status: 403 });
     }
 
     const { id } = await params;

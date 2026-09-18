@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Mail, Phone, MapPin, Globe, ArrowRight, MessageCircle } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
+import { TurnstileWidget } from '@/components/common/TurnstileWidget';
 import {
     Dialog,
     DialogContent,
@@ -27,6 +28,7 @@ export function ContactPage({ contactData: serverContactData }) {
     const { hero, info, process, form } = contactData;
     const [loading, setLoading] = useState(false);
     const [successOpen, setSuccessOpen] = useState(false);
+    const [turnstileToken, setTurnstileToken] = useState('');
 
     // Form States with Honeypot field for bot protection
     const [userForm, setUserForm] = useState({ name: '', email: '', subject: '', message: '', website_hp: '' });
@@ -41,7 +43,7 @@ export function ContactPage({ contactData: serverContactData }) {
             const response = await fetch('/api/contact', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ type, data }),
+                body: JSON.stringify({ type, data, turnstileToken }),
             });
 
             const result = await response.json();
@@ -148,6 +150,7 @@ export function ContactPage({ contactData: serverContactData }) {
                                             <label htmlFor="user-form-message" className="text-sm font-medium">Message</label>
                                             <Textarea id="user-form-message" placeholder="Tell us what you need..." rows={4} required value={userForm.message} onChange={e => setUserForm({ ...userForm, message: e.target.value })} />
                                         </div>
+                                        <TurnstileWidget onVerify={setTurnstileToken} onExpire={() => setTurnstileToken('')} />
                                         <Button type="submit" className="w-full bg-accent text-accent-foreground hover:bg-accent/90" disabled={loading}>
                                             {loading ? 'Sending...' : 'Send Message'} <ArrowRight className="w-4 h-4 ml-2" />
                                         </Button>
@@ -222,6 +225,7 @@ export function ContactPage({ contactData: serverContactData }) {
                                             <label htmlFor="company-form-details" className="text-sm font-medium">Project Details</label>
                                             <Textarea id="company-form-details" placeholder="Describe your project goals, timeline, and requirements..." rows={4} required value={companyForm.details} onChange={e => setCompanyForm({ ...companyForm, details: e.target.value })} />
                                         </div>
+                                        <TurnstileWidget onVerify={setTurnstileToken} onExpire={() => setTurnstileToken('')} />
                                         <Button type="submit" className="w-full bg-accent text-accent-foreground hover:bg-accent/90" disabled={loading}>
                                             {loading ? 'Sending...' : 'Request Consultation'} <ArrowRight className="w-4 h-4 ml-2" />
                                         </Button>
@@ -283,6 +287,7 @@ export function ContactPage({ contactData: serverContactData }) {
                                             <label htmlFor="sales-form-message" className="text-sm font-medium">Message</label>
                                             <Textarea id="sales-form-message" placeholder="How would you like to partner with us?" rows={4} required value={salesForm.message} onChange={e => setSalesForm({ ...salesForm, message: e.target.value })} />
                                         </div>
+                                        <TurnstileWidget onVerify={setTurnstileToken} onExpire={() => setTurnstileToken('')} />
                                         <Button type="submit" className="w-full bg-accent text-accent-foreground hover:bg-accent/90" disabled={loading}>
                                             {loading ? 'Sending...' : 'Contact Sales Team'} <ArrowRight className="w-4 h-4 ml-2" />
                                         </Button>

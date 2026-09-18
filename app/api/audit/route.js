@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/mongodb';
 import AuditLog from '@/lib/models/AuditLog';
-import { verifyToken } from '@/lib/auth';
+import { verifyToken, hasPermission, ROLES } from '@/lib/auth';
 
 export async function GET(req) {
   try {
@@ -9,6 +9,9 @@ export async function GET(req) {
     const authUser = await verifyToken(token);
     if (!authUser) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
+    if (!hasPermission(authUser.role, ROLES.ADMIN)) {
+      return NextResponse.json({ message: 'Forbidden: Insufficient privileges' }, { status: 403 });
     }
 
     const { searchParams } = new URL(req.url);

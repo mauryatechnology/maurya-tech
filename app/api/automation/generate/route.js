@@ -3,16 +3,25 @@ import crypto from 'crypto';
 import connectToDatabase from '@/lib/mongodb';
 import Post from '@/lib/models/Post';
 import AutomationJob from '@/lib/models/AutomationJob';
-import { verifyToken } from '@/lib/auth';
+import { verifyToken, hasPermission, ROLES } from '@/lib/auth';
 import { generateContentDraft } from '@/lib/automation/aiProvider';
 import { runQualityGate } from '@/lib/content/qualityGate';
 
 export async function POST(req) {
   try {
-    const token = req.cookies.get('admin_token')?.value;
-    const authUser = await verifyToken(token);
-    if (!authUser) {
-      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    const authHeader = req.headers.get('authorization');
+    const isCron = process.env.CRON_SECRET && authHeader === `Bearer ${process.env.CRON_SECRET}`;
+
+    let authUser = null;
+    if (!isCron) {
+      const token = req.cookies.get('admin_token')?.value;
+      authUser = await verifyToken(token);
+      if (!authUser) {
+        return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+      }
+      if (!hasPermission(authUser.role, ROLES.EDITOR)) {
+        return NextResponse.json({ message: 'Forbidden: Insufficient privileges' }, { status: 403 });
+      }
     }
 
     const body = await req.json();

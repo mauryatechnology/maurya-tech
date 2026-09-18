@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/mongodb';
 import Tool from '@/lib/models/Tool';
 import { defaultTools } from '@/data/tools';
-import { verifyToken } from '@/lib/auth';
+import { verifyToken, hasPermission, ROLES } from '@/lib/auth';
 import { logAuditEvent } from '@/lib/audit';
 
 export async function GET(req) {
@@ -28,6 +28,9 @@ export async function PUT(req) {
     const authUser = await verifyToken(token);
     if (!authUser) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
+    if (!hasPermission(authUser.role, ROLES.ADMIN)) {
+      return NextResponse.json({ message: 'Forbidden: Insufficient privileges' }, { status: 403 });
     }
 
     const body = await req.json();
@@ -78,6 +81,9 @@ export async function POST(req) {
     const authUser = await verifyToken(token);
     if (!authUser) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
+    if (!hasPermission(authUser.role, ROLES.ADMIN)) {
+      return NextResponse.json({ message: 'Forbidden: Insufficient privileges' }, { status: 403 });
     }
 
     const body = await req.json();

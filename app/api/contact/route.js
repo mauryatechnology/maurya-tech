@@ -3,6 +3,7 @@ import { sendMail, escapeHtml } from '@/lib/emailService';
 import connectToDatabase from '@/lib/mongodb';
 import Inquiry from '@/lib/models/Inquiry';
 import { checkRateLimit, getClientIp } from '@/lib/rateLimit';
+import { verifyTurnstileToken } from '@/lib/turnstile';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -99,6 +100,16 @@ export async function POST(req) {
       return NextResponse.json(
         { success: true, message: 'Message sent successfully. We will get back to you within 24 hours.' },
         { status: 200 }
+      );
+    }
+
+    // 2.5 Cloudflare Turnstile Bot Challenge (2nd layer of defense)
+    const turnstileToken = payload.turnstileToken || data.turnstileToken;
+    const turnstileCheck = await verifyTurnstileToken(turnstileToken, clientIp);
+    if (!turnstileCheck.success) {
+      return NextResponse.json(
+        { success: false, message: turnstileCheck.error || 'Security verification failed. Please try again.' },
+        { status: 403 }
       );
     }
 

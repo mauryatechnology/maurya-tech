@@ -15,6 +15,7 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { TurnstileWidget } from '@/components/common/TurnstileWidget';
 
 export const JobApplicationForm = ({ jobTitle, jobId }) => {
   const [loading, setLoading] = useState(false);
@@ -22,6 +23,7 @@ export const JobApplicationForm = ({ jobTitle, jobId }) => {
   const [uploadError, setUploadError] = useState(false);
   const [uploadedFileName, setUploadedFileName] = useState('');
   const [success, setSuccess] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState('');
 
   const linkInputRef = useRef(null);
 
@@ -32,6 +34,7 @@ export const JobApplicationForm = ({ jobTitle, jobId }) => {
     linkedin: '',
     resume: '',
     coverLetter: '',
+    website_hp: '',
   });
 
   const handleChange = (e) => {
@@ -108,7 +111,7 @@ export const JobApplicationForm = ({ jobTitle, jobId }) => {
       const response = await fetch('/api/apply', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...formData, jobTitle, jobId }),
+        body: JSON.stringify({ ...formData, jobTitle, jobId, turnstileToken }),
       });
 
       const result = await response.json();
@@ -185,6 +188,19 @@ export const JobApplicationForm = ({ jobTitle, jobId }) => {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4 text-xs">
+        {/* Anti-Bot Honeypot Field */}
+        <div className="opacity-0 absolute -z-50 pointer-events-none h-0 w-0 overflow-hidden" aria-hidden="true">
+          <label htmlFor="apply-form-hp">Leave this field blank</label>
+          <input
+            id="apply-form-hp"
+            type="text"
+            name="website_hp"
+            tabIndex={-1}
+            autoComplete="off"
+            value={formData.website_hp || ''}
+            onChange={handleChange}
+          />
+        </div>
         {/* Full Name */}
         <div className="space-y-1.5">
           <label htmlFor="apply-name" className="text-xs font-semibold text-foreground">
@@ -352,6 +368,9 @@ export const JobApplicationForm = ({ jobTitle, jobId }) => {
             className="text-xs leading-relaxed"
           />
         </div>
+
+        {/* Cloudflare Turnstile Bot Challenge */}
+        <TurnstileWidget onVerify={setTurnstileToken} onExpire={() => setTurnstileToken('')} />
 
         {/* Submit Button */}
         <Button

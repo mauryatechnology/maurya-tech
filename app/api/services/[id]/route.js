@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/mongodb';
 import Service from '@/lib/models/Service';
-import { verifyToken } from '@/lib/auth';
+import { verifyToken, hasPermission, ROLES } from '@/lib/auth';
 import { services as fallbackServices } from '@/data/services';
 
 export async function GET(req, { params }) {
@@ -17,7 +17,7 @@ export async function GET(req, { params }) {
       return NextResponse.json({ success: true, service });
     }
 
-    const fallback = (fallbackServices.services || []).find((s) => s.id === id);
+    const fallback = fallbackServices.services.find((s) => s.id === id);
     if (fallback) {
       return NextResponse.json({ success: true, service: fallback });
     }
@@ -35,6 +35,9 @@ export async function PUT(req, { params }) {
     const authUser = await verifyToken(token);
     if (!authUser) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
+    if (!hasPermission(authUser.role, ROLES.EDITOR)) {
+      return NextResponse.json({ message: 'Forbidden: Insufficient privileges' }, { status: 403 });
     }
 
     const { id } = await params;
@@ -64,6 +67,9 @@ export async function DELETE(req, { params }) {
     const authUser = await verifyToken(token);
     if (!authUser) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
+    if (!hasPermission(authUser.role, ROLES.EDITOR)) {
+      return NextResponse.json({ message: 'Forbidden: Insufficient privileges' }, { status: 403 });
     }
 
     const { id } = await params;

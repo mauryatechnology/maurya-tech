@@ -3,6 +3,7 @@ import { sendMail, escapeHtml } from '@/lib/emailService';
 import connectToDatabase from '@/lib/mongodb';
 import Application from '@/lib/models/Application';
 import { checkRateLimit, getClientIp } from '@/lib/rateLimit';
+import { verifyTurnstileToken } from '@/lib/turnstile';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -33,6 +34,27 @@ export async function POST(req) {
     }
 
     const data = await req.json();
+
+    // 1.5 Anti-Bot Protection: Honeypot check
+    if (data.website_hp && String(data.website_hp).trim().length > 0) {
+      console.warn(`[Anti-Spam] Bot trapped by honeypot in apply route from IP ${clientIp}.`);
+      return NextResponse.json(
+        {
+          success: true,
+          message: 'Application submitted successfully! Our engineering team will review it and get back to you shortly.',
+        },
+        { status: 200 }
+      );
+    }
+
+    // 1.6 Anti-Bot Protection: Cloudflare Turnstile verification
+    const turnstileCheck = await verifyTurnstileToken(data.turnstileToken, clientIp);
+    if (!turnstileCheck.success) {
+      return NextResponse.json(
+        { success: false, message: turnstileCheck.error || 'Security challenge failed. Please try again.' },
+        { status: 403 }
+      );
+    }
 
     // 2. Validate required fields & formats
     const name = data.name?.trim().slice(0, 100);

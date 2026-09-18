@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/mongodb';
 import AffiliateOffer from '@/lib/models/AffiliateOffer';
-import { verifyToken } from '@/lib/auth';
+import { verifyToken, hasPermission, ROLES } from '@/lib/auth';
 import { logAuditEvent } from '@/lib/audit';
 
 export async function GET(req) {
@@ -39,19 +39,22 @@ export async function GET(req) {
 
 export async function POST(req) {
   try {
+    const body = await req.json();
+
+    // If tracking a click (public metric tracker)
+    if (body.action === 'track_click' && body.id) {
+      await connectToDatabase();
+      await AffiliateOffer.findByIdAndUpdate(body.id, { $inc: { clicksCount: 1 } });
+      return NextResponse.json({ success: true });
+    }
+
     const token = req.cookies.get('admin_token')?.value;
     const authUser = await verifyToken(token);
     if (!authUser) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
-
-    const body = await req.json();
-
-    // If tracking a click
-    if (body.action === 'track_click' && body.id) {
-      await connectToDatabase();
-      await AffiliateOffer.findByIdAndUpdate(body.id, { $inc: { clicksCount: 1 } });
-      return NextResponse.json({ success: true });
+    if (!hasPermission(authUser.role, ROLES.ADMIN)) {
+      return NextResponse.json({ message: 'Forbidden: Insufficient privileges' }, { status: 403 });
     }
 
     if (!body.title || !body.targetUrl) {
@@ -102,6 +105,9 @@ export async function PUT(req) {
     if (!authUser) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
+    if (!hasPermission(authUser.role, ROLES.ADMIN)) {
+      return NextResponse.json({ message: 'Forbidden: Insufficient privileges' }, { status: 403 });
+    }
 
     const body = await req.json();
     const { id, ...updates } = body;
@@ -145,6 +151,9 @@ export async function DELETE(req) {
     const authUser = await verifyToken(token);
     if (!authUser) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
+    if (!hasPermission(authUser.role, ROLES.ADMIN)) {
+      return NextResponse.json({ message: 'Forbidden: Insufficient privileges' }, { status: 403 });
     }
 
     const { searchParams } = new URL(req.url);

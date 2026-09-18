@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/mongodb';
 import Application from '@/lib/models/Application';
-import { verifyToken } from '@/lib/auth';
+import { verifyToken, hasPermission, ROLES } from '@/lib/auth';
 import { logSecurityEvent } from '@/lib/securityLogger';
 import { getClientIp } from '@/lib/rateLimit';
 
@@ -21,6 +21,9 @@ export async function GET(req) {
         endpoint: '/api/applications',
       });
       return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
+    }
+    if (!hasPermission(authUser.role, ROLES.ADMIN)) {
+      return NextResponse.json({ success: false, message: 'Forbidden: Insufficient privileges' }, { status: 403 });
     }
 
     await connectToDatabase();

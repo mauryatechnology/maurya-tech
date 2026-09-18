@@ -1,19 +1,22 @@
 import { NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/mongodb';
 import Project from '@/lib/models/Project';
-import { verifyToken } from '@/lib/auth';
+import { verifyToken, hasPermission, ROLES } from '@/lib/auth';
 import { projects as fallbackProjects } from '@/data/projects';
 
 export async function GET(req) {
   try {
     await connectToDatabase();
     const { searchParams } = new URL(req.url);
-    const all = searchParams.get('all') === 'true';
     const category = searchParams.get('category');
+    const featured = searchParams.get('featured');
 
-    const filter = all ? {} : { isPublished: true };
+    const filter = {};
     if (category && category !== 'All') {
       filter.category = category;
+    }
+    if (featured === 'true') {
+      filter.featured = true;
     }
 
     const dbProjects = await Project.find(filter).sort({ order: 1, createdAt: -1 });
@@ -22,10 +25,12 @@ export async function GET(req) {
       return NextResponse.json({ success: true, projects: dbProjects });
     }
 
-    // Safe fallback to static data
     let list = fallbackProjects.projects || [];
     if (category && category !== 'All') {
       list = list.filter((p) => p.category === category);
+    }
+    if (featured === 'true') {
+      list = list.filter((p) => p.featured);
     }
     return NextResponse.json({ success: true, projects: list });
   } catch (error) {
@@ -40,6 +45,9 @@ export async function POST(req) {
     const authUser = await verifyToken(token);
     if (!authUser) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
+    if (!hasPermission(authUser.role, ROLES.EDITOR)) {
+      return NextResponse.json({ message: 'Forbidden: Insufficient privileges' }, { status: 403 });
     }
 
     const body = await req.json();
