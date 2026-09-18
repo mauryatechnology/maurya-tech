@@ -26,6 +26,7 @@ export default function AdminBlogsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPost, setEditingPost] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [activeTab, setActiveTab] = useState('all');
 
   const [formData, setFormData] = useState({
     title: '',
@@ -42,6 +43,7 @@ export default function AdminBlogsPage() {
     author: 'Maurya Technologies Team',
     coverImage: '',
     featured: false,
+    status: 'published',
     isPublished: true,
   });
 
@@ -81,6 +83,7 @@ export default function AdminBlogsPage() {
       author: 'Maurya Technologies Team',
       coverImage: '',
       featured: false,
+      status: 'published',
       isPublished: true,
     });
     setIsModalOpen(true);
@@ -88,6 +91,7 @@ export default function AdminBlogsPage() {
 
   const openEditModal = (p) => {
     setEditingPost(p);
+    const postStatus = p.status || (p.isPublished ? 'published' : 'draft');
     setFormData({
       title: p.title || '',
       slug: p.slug || '',
@@ -103,7 +107,8 @@ export default function AdminBlogsPage() {
       author: p.author || 'Maurya Technologies Team',
       coverImage: p.coverImage || '',
       featured: p.featured || false,
-      isPublished: p.isPublished !== undefined ? p.isPublished : true,
+      status: postStatus,
+      isPublished: postStatus === 'published',
     });
     setIsModalOpen(true);
   };
@@ -112,8 +117,10 @@ export default function AdminBlogsPage() {
     e.preventDefault();
     setSaving(true);
 
+    const isPub = formData.status === 'published';
     const payload = {
       ...formData,
+      isPublished: isPub,
       tags: formData.tags.split(',').map((t) => t.trim()).filter(Boolean),
     };
 
@@ -137,6 +144,32 @@ export default function AdminBlogsPage() {
       console.error('Save post error:', err);
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleStatusChange = async (p, newStatus) => {
+    try {
+      const isPub = newStatus === 'published';
+      const res = await fetch(`/api/posts/${p.slug || p.id || p._id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...p,
+          status: newStatus,
+          isPublished: isPub,
+        }),
+      });
+      if (res.ok) {
+        setPosts((prev) =>
+          prev.map((item) =>
+            item._id === p._id || item.slug === p.slug
+              ? { ...item, status: newStatus, isPublished: isPub }
+              : item
+          )
+        );
+      }
+    } catch (err) {
+      console.error('Status update error:', err);
     }
   };
 
@@ -174,6 +207,53 @@ export default function AdminBlogsPage() {
         </button>
       </div>
 
+      {/* Status Filter Tabs */}
+      <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
+        {[
+          { id: 'all', label: 'All Articles', count: posts.length },
+          {
+            id: 'published',
+            label: 'Published',
+            count: posts.filter(
+              (p) => (p.status || (p.isPublished ? 'published' : 'draft')) === 'published'
+            ).length,
+          },
+          {
+            id: 'review',
+            label: 'In Review',
+            count: posts.filter((p) => p.status === 'review').length,
+          },
+          {
+            id: 'draft',
+            label: 'Drafts',
+            count: posts.filter(
+              (p) => (p.status || (p.isPublished ? 'published' : 'draft')) === 'draft'
+            ).length,
+          },
+        ].map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-2 transition cursor-pointer ${
+              activeTab === tab.id
+                ? 'bg-cyan-500/15 text-cyan-400 border border-cyan-500/30'
+                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+            }`}
+          >
+            <span>{tab.label}</span>
+            <span
+              className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono ${
+                activeTab === tab.id
+                  ? 'bg-cyan-500/20 text-cyan-300'
+                  : 'bg-slate-800 text-slate-400'
+              }`}
+            >
+              {tab.count}
+            </span>
+          </button>
+        ))}
+      </div>
+
       {/* Posts Table */}
       <div className="bg-slate-900/80 border border-slate-800 rounded-2xl overflow-hidden backdrop-blur-sm">
         {loading ? (
@@ -193,75 +273,105 @@ export default function AdminBlogsPage() {
                   <th className="p-4">Article Title</th>
                   <th className="p-4">Category</th>
                   <th className="p-4">Views</th>
-                  <th className="p-4">Status</th>
+                  <th className="p-4">Editorial Status</th>
                   <th className="p-4 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-800/60">
-                {posts.map((p) => (
-                  <tr key={p._id || p.slug} className="hover:bg-slate-800/40 transition">
-                    <td className="p-4">
-                      <div className="font-semibold text-slate-100 text-sm">{p.title}</div>
-                      <div className="flex items-center gap-3 text-slate-500 text-[11px] mt-1">
-                        <span className="flex items-center gap-1">
-                          <Calendar className="w-3 h-3" />
-                          {p.date || 'Recent'}
-                        </span>
-                        <span>&bull;</span>
-                        <span>{p.readTime || '5 min read'}</span>
-                      </div>
-                    </td>
-                    <td className="p-4">
-                      <span className="px-2.5 py-1 rounded-full text-[10px] font-medium bg-slate-800 text-slate-300">
-                        {p.category}
-                      </span>
-                    </td>
-                    <td className="p-4 font-mono text-cyan-400">
-                      <span className="flex items-center gap-1">
-                        <Eye className="w-3.5 h-3.5 text-slate-500" />
-                        {p.viewsCount || 0}
-                      </span>
-                    </td>
-                    <td className="p-4">
-                      <span
-                        className={`px-2.5 py-1 rounded-full text-[10px] font-semibold ${
-                          p.isPublished
-                            ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
-                            : 'bg-slate-800 text-slate-500'
-                        }`}
-                      >
-                        {p.isPublished ? 'Published' : 'Draft'}
-                      </span>
-                    </td>
-                    <td className="p-4 text-right">
-                      <div className="inline-flex items-center gap-2">
-                        <Link
-                          href={`/blog/${p.slug}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-400"
-                          title="View Article"
-                        >
-                          <ExternalLink className="w-3.5 h-3.5" />
-                        </Link>
-                        <button
-                          onClick={() => openEditModal(p)}
-                          className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 cursor-pointer"
-                          title="Edit"
-                        >
-                          <Edit2 className="w-3.5 h-3.5" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(p)}
-                          className="p-2 rounded-lg bg-slate-800 hover:bg-rose-500/20 text-rose-400 cursor-pointer"
-                          title="Delete"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                {posts
+                  .filter((p) => {
+                    const s = p.status || (p.isPublished ? 'published' : 'draft');
+                    if (activeTab === 'all') return true;
+                    return s === activeTab;
+                  })
+                  .map((p) => {
+                    const currentStatus = p.status || (p.isPublished ? 'published' : 'draft');
+                    return (
+                      <tr key={p._id || p.slug} className="hover:bg-slate-800/40 transition">
+                        <td className="p-4">
+                          <div className="font-semibold text-slate-100 text-sm">{p.title}</div>
+                          <div className="flex items-center gap-3 text-slate-500 text-[11px] mt-1">
+                            <span className="flex items-center gap-1">
+                              <Calendar className="w-3 h-3" />
+                              {p.date || 'Recent'}
+                            </span>
+                            <span>&bull;</span>
+                            <span>{p.readTime || '5 min read'}</span>
+                            {p.canonicalCountry && (
+                              <>
+                                <span>&bull;</span>
+                                <span className="font-mono text-cyan-400 uppercase">
+                                  {p.canonicalCountry}
+                                </span>
+                              </>
+                            )}
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <span className="px-2.5 py-1 rounded-full text-[10px] font-medium bg-slate-800 text-slate-300">
+                            {p.category}
+                          </span>
+                        </td>
+                        <td className="p-4 font-mono text-cyan-400">
+                          <span className="flex items-center gap-1">
+                            <Eye className="w-3.5 h-3.5 text-slate-500" />
+                            {p.viewsCount || 0}
+                          </span>
+                        </td>
+                        <td className="p-4">
+                          <div className="flex items-center gap-2">
+                            <span
+                              className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                                currentStatus === 'published'
+                                  ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                                  : currentStatus === 'review'
+                                  ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
+                                  : 'bg-slate-800 text-slate-400 border border-slate-700'
+                              }`}
+                            >
+                              {currentStatus}
+                            </span>
+                            {currentStatus === 'review' && (
+                              <button
+                                onClick={() => handleStatusChange(p, 'published')}
+                                className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 cursor-pointer transition"
+                                title="Approve and Publish Immediately"
+                              >
+                                Approve
+                              </button>
+                            )}
+                          </div>
+                        </td>
+                        <td className="p-4 text-right">
+                          <div className="inline-flex items-center gap-2">
+                            <Link
+                              href={`/blog/${p.slug}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-400"
+                              title="View Article"
+                            >
+                              <ExternalLink className="w-3.5 h-3.5" />
+                            </Link>
+                            <button
+                              onClick={() => openEditModal(p)}
+                              className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 cursor-pointer"
+                              title="Edit"
+                            >
+                              <Edit2 className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={() => handleDelete(p)}
+                              className="p-2 rounded-lg bg-slate-800 hover:bg-rose-500/20 text-rose-400 cursor-pointer"
+                              title="Delete"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
               </tbody>
             </table>
           </div>
@@ -415,6 +525,10 @@ export default function AdminBlogsPage() {
                       <option value="percentage-calculator">Percentage Calculator</option>
                       <option value="age-calculator">Age Calculator</option>
                       <option value="ats-resume-checker">ATS Resume Checker</option>
+                      <option value="cgpa-calculator">CGPA & GPA Calculator</option>
+                      <option value="resume-builder">Resume & CV Builder</option>
+                      <option value="unit-converter">Unit Converter</option>
+                      <option value="freelance-rate-calculator">Freelance Rate Calculator</option>
                     </select>
                   </div>
                 </div>
@@ -480,25 +594,30 @@ export default function AdminBlogsPage() {
                 />
               </div>
 
-              <div className="flex items-center gap-6 pt-2">
-                <label className="flex items-center gap-2 text-slate-300 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={formData.isPublished}
-                    onChange={(e) => setFormData({ ...formData, isPublished: e.target.checked })}
-                    className="rounded border-slate-700 text-cyan-500"
-                  />
-                  <span>Publish Article to Website</span>
-                </label>
-                <label className="flex items-center gap-2 text-slate-300 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={formData.featured}
-                    onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
-                    className="rounded border-slate-700 text-cyan-500"
-                  />
-                  <span>Feature on Blog Homepage</span>
-                </label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                <div>
+                  <label className="block text-slate-300 font-semibold mb-1">Editorial Status</label>
+                  <select
+                    value={formData.status}
+                    onChange={(e) => setFormData({ ...formData, status: e.target.value, isPublished: e.target.value === 'published' })}
+                    className="w-full p-2.5 rounded-xl bg-slate-800 border border-slate-700 text-slate-100 focus:outline-none focus:border-cyan-500"
+                  >
+                    <option value="draft">Draft (Work in Progress)</option>
+                    <option value="review">In Review (Editorial Gate Pending)</option>
+                    <option value="published">Published (Live on Website)</option>
+                  </select>
+                </div>
+                <div className="flex items-end pb-2">
+                  <label className="flex items-center gap-2 text-slate-300 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={formData.featured}
+                      onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
+                      className="rounded border-slate-700 text-cyan-500"
+                    />
+                    <span>Feature on Blog Homepage</span>
+                  </label>
+                </div>
               </div>
 
               <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-800">

@@ -40,16 +40,24 @@ export function CountryHeader({ currentCountry = 'in', marketName = 'India' }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Brand */}
         <div className="flex items-center gap-6">
-          <Link href={`/${currentCountry}`} className="flex items-center gap-2 group">
-            <span className="w-8 h-8 rounded-lg bg-gradient-to-tr from-[#0A2540] to-[#00D4FF] flex items-center justify-center text-white font-bold text-lg shadow-sm">
-              M
-            </span>
+          <Link href={`/${currentCountry}`} className="flex items-center gap-3 group">
+            <div className="w-9 h-9 rounded-xl bg-slate-900/5 p-1 border border-slate-200/80 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-200 shadow-2xs">
+              <Image
+                src="/logo.png"
+                alt="Maurya Technologies Logo"
+                width={32}
+                height={32}
+                className="w-8 h-8 object-contain"
+                priority
+              />
+            </div>
             <div className="flex flex-col">
-              <span className="font-bold text-base text-slate-900 tracking-tight group-hover:text-[#00D4FF] transition">
-                Maurya-Tech
+              <span className="font-heading font-bold text-base text-slate-900 tracking-tight group-hover:text-cyan-600 transition">
+                Maurya Technologies
               </span>
-              <span className="text-[10px] text-slate-500 font-medium -mt-1 tracking-wider uppercase">
-                {activeCountry.name} Hub
+              <span className="text-[10px] text-slate-500 font-semibold -mt-0.5 tracking-wider uppercase flex items-center gap-1">
+                <span>{activeCountry.flag}</span>
+                <span>{activeCountry.name} Hub</span>
               </span>
             </div>
           </Link>

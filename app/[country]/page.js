@@ -14,6 +14,9 @@ import {
   Sparkles,
   TrendingUp,
   Cpu,
+  GraduationCap,
+  FileText,
+  Briefcase,
 } from 'lucide-react';
 
 const SUPPORTED_COUNTRIES = ['in', 'us', 'uk'];
@@ -26,7 +29,7 @@ export async function generateMetadata({ params }) {
   const market = await getMarketProfile(normalized);
 
   return {
-    title: `${market.name} Digital Utility Hub: Free Online Calculators & Tools`,
+    title: `Free Online Calculators & Financial Tools for ${market.name} (2026)`,
     description: `Access instant, accurate calculators for ${market.name}. CTC to in-hand salary, EMI, percentage, age, and ATS resume checkers. 100% client-side privacy.`,
   };
 }
@@ -38,7 +41,7 @@ export default async function CountryHomePage({ params }) {
 
   const market = await getMarketProfile(normalized);
 
-  // Define country-customized tool cards
+  // Define country-customized tool cards (6 featured utilities)
   const tools = [
     {
       slug: normalized === 'us' ? 'hourly-to-annual-salary' : 'ctc-calculator',
@@ -60,13 +63,46 @@ export default async function CountryHomePage({ params }) {
       color: 'from-emerald-500 to-teal-600',
     },
     {
+      slug: 'resume-builder',
+      title: 'Free ATS Resume & CV Builder 2026',
+      description: 'Create an ATS-compliant tech resume with live split preview and instant browser PDF export.',
+      badge: 'Career Tool',
+      badgeColor: 'bg-blue-100 text-blue-800 border-blue-200',
+      icon: FileText,
+      color: 'from-blue-500 to-indigo-600',
+    },
+    {
+      slug: normalized === 'in' ? 'emi-calculator' : 'freelance-rate-calculator',
+      title:
+        normalized === 'in'
+          ? 'Home, Car & Personal Loan EMI Calculator'
+          : 'Freelance & Consultant Rate Calculator',
+      description:
+        normalized === 'in'
+          ? 'Calculate monthly loan installments with principal vs interest visual amortization charts.'
+          : 'Calculate hourly, day, and project rates based on target income, overhead, and tax buffers.',
+      badge: 'Finance',
+      badgeColor: 'bg-indigo-100 text-indigo-800 border-indigo-200',
+      icon: normalized === 'in' ? CreditCard : Briefcase,
+      color: 'from-indigo-500 to-purple-600',
+    },
+    {
+      slug: 'cgpa-calculator',
+      title: 'CGPA to Percentage & US 4.0 GPA',
+      description: 'Convert university CGPA to percentage using CBSE 9.5 multiplier, or convert to US 4.0 scale.',
+      badge: 'Academic',
+      badgeColor: 'bg-cyan-100 text-cyan-800 border-cyan-200',
+      icon: GraduationCap,
+      color: 'from-cyan-500 to-blue-600',
+    },
+    {
       slug: 'percentage-calculator',
       title: 'Percentage & Discount Calculator',
       description: 'Quickly find percentage increases, markups, discounts, exam scores, and GST/sales tax in seconds.',
       badge: 'Everyday Utility',
-      badgeColor: 'bg-cyan-100 text-cyan-800 border-cyan-200',
+      badgeColor: 'bg-teal-100 text-teal-800 border-teal-200',
       icon: Percent,
-      color: 'from-cyan-500 to-blue-600',
+      color: 'from-teal-500 to-emerald-600',
     },
     {
       slug: 'age-calculator',
@@ -76,21 +112,6 @@ export default async function CountryHomePage({ params }) {
       badgeColor: 'bg-amber-100 text-amber-800 border-amber-200',
       icon: Calendar,
       color: 'from-amber-500 to-orange-600',
-    },
-    {
-      slug: normalized === 'in' ? 'emi-calculator' : 'ats-resume-checker',
-      title:
-        normalized === 'in'
-          ? 'Home, Car & Personal Loan EMI Calculator'
-          : 'Free ATS Resume Checker & Parser',
-      description:
-        normalized === 'in'
-          ? 'Calculate monthly loan installments with principal vs interest visual amortization charts.'
-          : 'Scan your resume against modern ATS algorithms with instant keyword density and impact scoring.',
-      badge: normalized === 'in' ? 'Finance' : 'Career',
-      badgeColor: 'bg-indigo-100 text-indigo-800 border-indigo-200',
-      icon: normalized === 'in' ? CreditCard : FileCheck2,
-      color: 'from-indigo-500 to-purple-600',
     },
   ];
 

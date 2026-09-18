@@ -198,4 +198,106 @@ export const defaultTools = [
     status: 'published',
     enabled: true,
   },
+  {
+    slug: 'cgpa-calculator',
+    name: 'CGPA to Percentage & US 4.0 GPA Calculator',
+    category: 'general',
+    countries: ['IN', 'US', 'UK'],
+    scope: 'GLOBAL',
+    computeConfig: {
+      defaultMultiplier: 9.5,
+    },
+    seo: {
+      title: 'CGPA to Percentage & US 4.0 GPA Calculator (2026) | Maurya Technologies',
+      description: 'Convert 10-point CGPA to percentage using CBSE and university multipliers. Convert Indian CGPA to US 4.0 GPA scale and calculate semester SGPA.',
+      primaryKeyword: 'cgpa to percentage calculator',
+      faqSchema: [
+        {
+          question: 'How do you convert CGPA to percentage in CBSE?',
+          answer: 'Multiply your CGPA by 9.5. For example, a CGPA of 8.4 equals 8.4 × 9.5 = 79.8%.',
+        },
+        {
+          question: 'How does Indian 10-point CGPA convert to US 4.0 GPA?',
+          answer: 'A CGPA of 9.0–10.0 converts to a 4.0 (A), 8.0–8.9 converts to roughly 3.7–3.9 (A-), and 7.0–7.9 converts to 3.3–3.6 (B+).',
+        },
+      ],
+    },
+    status: 'published',
+    enabled: true,
+  },
+  {
+    slug: 'resume-builder',
+    name: 'Free ATS Resume & CV Builder 2026',
+    category: 'salary',
+    countries: ['IN', 'US', 'UK'],
+    scope: 'GLOBAL',
+    computeConfig: {},
+    seo: {
+      title: 'Free ATS Resume & CV Builder (2026) | Maurya Technologies',
+      description: 'Create an ATS-compliant resume with live preview and instant browser PDF export. Tailored for software engineers, designers, and tech professionals.',
+      primaryKeyword: 'free ats resume builder online',
+      faqSchema: [
+        {
+          question: 'Is this resume builder truly free with no watermarks?',
+          answer: 'Yes, 100% free with no watermarks, no account signup required, and zero hidden paywalls.',
+        },
+        {
+          question: 'Can I export my resume directly as a PDF?',
+          answer: 'Yes, click "Print or Export as PDF" to save a clean, high-resolution A4 or Letter PDF directly via your browser print dialog.',
+        },
+      ],
+    },
+    status: 'published',
+    enabled: true,
+  },
+  {
+    slug: 'unit-converter',
+    name: 'Universal Unit & Measurement Converter',
+    category: 'general',
+    countries: ['IN', 'US', 'UK'],
+    scope: 'GLOBAL',
+    computeConfig: {},
+    seo: {
+      title: 'Universal Unit & Measurement Converter | Maurya Technologies',
+      description: 'Fast online unit converter for length, mass, digital storage (KB, MB, GB, TB), temperature, and speed. Accurate instant results.',
+      primaryKeyword: 'unit converter online free',
+      faqSchema: [
+        {
+          question: 'How many bytes are in a Gigabyte (GB)?',
+          answer: 'In binary computing (base-2), 1 Gigabyte (GB) = 1,073,741,824 bytes (1,024 Megabytes).',
+        },
+        {
+          question: 'How do you convert Celsius to Fahrenheit?',
+          answer: 'Formula: °F = (°C × 9/5) + 32.',
+        },
+      ],
+    },
+    status: 'published',
+    enabled: true,
+  },
+  {
+    slug: 'freelance-rate-calculator',
+    name: 'Freelance & Consultant Rate Calculator',
+    category: 'finance',
+    countries: ['IN', 'US', 'UK'],
+    scope: 'GLOBAL',
+    computeConfig: {},
+    seo: {
+      title: 'Freelance & Consultant Rate Calculator 2026 | Maurya Technologies',
+      description: 'Calculate your hourly rate, day rate, and project pricing. Factored for billable hours, business software overhead, and tax buffers.',
+      primaryKeyword: 'freelance rate calculator',
+      faqSchema: [
+        {
+          question: 'Why should freelancers charge more than their equivalent hourly employee wage?',
+          answer: 'Freelancers must cover non-billable business development hours, software subscriptions, self-employment taxes, hardware depreciation, and health insurance.',
+        },
+        {
+          question: 'How many billable hours are realistic per week?',
+          answer: 'Most full-time freelancers average 25–30 billable hours per week, with the remaining 10–15 hours dedicated to administration, proposals, and skill development.',
+        },
+      ],
+    },
+    status: 'published',
+    enabled: true,
+  },
 ];

@@ -17,10 +17,20 @@ import {
   Menu,
   X,
   Shield,
+  Globe,
+  Wrench,
+  ShoppingBag,
+  Zap,
+  History,
 } from 'lucide-react';
 
 const NAV_ITEMS = [
   { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
+  { name: 'Markets & Geo', href: '/admin/markets', icon: Globe },
+  { name: 'Interactive Tools', href: '/admin/tools', icon: Wrench },
+  { name: 'Digital Orders', href: '/admin/orders', icon: ShoppingBag },
+  { name: 'Automation Rules', href: '/admin/automation', icon: Zap },
+  { name: 'Audit Trail', href: '/admin/audit', icon: History },
   { name: 'Job Applications', href: '/admin/applications', icon: Users },
   { name: 'Careers CMS', href: '/admin/jobs', icon: Briefcase },
   { name: 'Portfolio CMS', href: '/admin/projects', icon: FolderGit2 },

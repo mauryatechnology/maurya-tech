@@ -8,6 +8,10 @@ import { EmiCalculator } from '@/components/tools/calculators/EmiCalculator';
 import { PercentageCalculator } from '@/components/tools/calculators/PercentageCalculator';
 import { AgeDateCalculator } from '@/components/tools/calculators/AgeDateCalculator';
 import { AtsResumeChecker } from '@/components/tools/calculators/AtsResumeChecker';
+import { CgpaCalculator } from '@/components/tools/calculators/CgpaCalculator';
+import { ResumeBuilder } from '@/components/tools/calculators/ResumeBuilder';
+import { UnitConverter } from '@/components/tools/calculators/UnitConverter';
+import { FreelanceRateCalculator } from '@/components/tools/calculators/FreelanceRateCalculator';
 
 const SUPPORTED_COUNTRIES = ['in', 'us', 'uk'];
 
@@ -18,6 +22,10 @@ const CALCULATOR_COMPONENTS = {
   'percentage-calculator': PercentageCalculator,
   'age-calculator': AgeDateCalculator,
   'ats-resume-checker': AtsResumeChecker,
+  'cgpa-calculator': CgpaCalculator,
+  'resume-builder': ResumeBuilder,
+  'unit-converter': UnitConverter,
+  'freelance-rate-calculator': FreelanceRateCalculator,
 };
 
 export async function generateStaticParams() {

@@ -15,6 +15,10 @@ import {
   Sparkles,
   Search,
   FileCheck2,
+  GraduationCap,
+  FileText,
+  Ruler,
+  Briefcase,
 } from 'lucide-react';
 
 const SUPPORTED_COUNTRIES = ['in', 'us', 'uk'];
@@ -47,6 +51,10 @@ const TOOL_ICONS = {
   'percentage-calculator': Percent,
   'age-calculator': Calendar,
   'ats-resume-checker': FileCheck2,
+  'cgpa-calculator': GraduationCap,
+  'resume-builder': FileText,
+  'unit-converter': Ruler,
+  'freelance-rate-calculator': Briefcase,
 };
 
 const CATEGORY_NAMES = {
