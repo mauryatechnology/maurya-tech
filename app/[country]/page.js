@@ -78,18 +78,18 @@ export default async function CountryHomePage({ params }) {
       color: 'from-amber-500 to-orange-600',
     },
     {
-      slug: normalized === 'in' ? 'emi-calculator' : 'hourly-to-annual-salary',
+      slug: normalized === 'in' ? 'emi-calculator' : 'ats-resume-checker',
       title:
         normalized === 'in'
           ? 'Home, Car & Personal Loan EMI Calculator'
-          : 'Freelance & Contract Hourly Rate Calculator',
+          : 'Free ATS Resume Checker & Parser',
       description:
         normalized === 'in'
           ? 'Calculate monthly loan installments with principal vs interest visual amortization charts.'
-          : 'Determine what hourly rate you should charge based on your desired annual take-home and business expenses.',
+          : 'Scan your resume against modern ATS algorithms with instant keyword density and impact scoring.',
       badge: normalized === 'in' ? 'Finance' : 'Career',
       badgeColor: 'bg-indigo-100 text-indigo-800 border-indigo-200',
-      icon: CreditCard,
+      icon: normalized === 'in' ? CreditCard : FileCheck2,
       color: 'from-indigo-500 to-purple-600',
     },
   ];
