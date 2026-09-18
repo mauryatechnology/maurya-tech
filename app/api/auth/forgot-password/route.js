@@ -62,9 +62,9 @@ export async function POST(req) {
     user.resetPasswordExpire = new Date(Date.now() + 15 * 60 * 1000); // 15 mins
     await user.save();
 
-    // 3. Construct reset URL
-    const origin = req.headers.get('origin') || 'https://maurya-tech.com';
-    const resetUrl = `${origin}/admin/reset-password?token=${resetToken}`;
+    // 3. Construct reset URL using configured site URL to prevent header poisoning
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://maurya-tech.com';
+    const resetUrl = `${baseUrl}/admin/reset-password?token=${resetToken}`;
 
     const subject = '🔐 Password & Security PIN Reset Request - Maurya Technologies';
     const html = `

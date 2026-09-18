@@ -114,7 +114,7 @@ export const TestimonialCard = ({
         <LucideIcons.Quote className="w-8 h-8 text-accent/40" />
       </div>
       <blockquote className="text-lg text-card-foreground leading-relaxed mb-6">
-        "{quote}"
+        &ldquo;{quote}&rdquo;
       </blockquote>
       <div className="flex items-center gap-4">
         {image ? (

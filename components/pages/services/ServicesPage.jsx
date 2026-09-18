@@ -115,7 +115,7 @@ export function ServicesPage({ servicesData: serverServicesData }) {
                             </p>
 
                             <div className="mb-6">
-                                <h4 className="font-semibold mb-4">What's Included</h4>
+                                <h4 className="font-semibold mb-4">What&apos;s Included</h4>
                                 <div className="space-y-3">
                                     {selectedService.features.map((feature, index) => (
                                         <div key={index} className="flex items-center gap-3">

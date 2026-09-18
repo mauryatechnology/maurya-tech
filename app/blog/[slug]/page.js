@@ -4,10 +4,12 @@ import { BlogPostPage } from '@/components/pages/blog/BlogPostPage';
 import { posts as fallbackPosts } from '@/data/posts';
 import connectToDatabase from '@/lib/mongodb';
 import Post from '@/lib/models/Post';
+import { serializeJsonLd } from '@/lib/utils';
 
 export const revalidate = 60;
 
 const postFilter = (slug) => ({
+  isPublished: true,
   $or: [
     { slug },
     { customId: slug },
@@ -97,5 +99,38 @@ export default async function BlogPost({ params }) {
 
   await recordView(slug);
 
-  return <BlogPostPage post={post} relatedPosts={related} />;
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: post.title,
+    description: post.excerpt,
+    datePublished: post.createdAt ? new Date(post.createdAt).toISOString() : '2026-01-01T00:00:00.000Z',
+    dateModified: post.updatedAt ? new Date(post.updatedAt).toISOString() : (post.createdAt ? new Date(post.createdAt).toISOString() : '2026-01-01T00:00:00.000Z'),
+    author: {
+      '@type': 'Person',
+      name: post.author?.name || 'Kuldeep Maurya',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Maurya Technologies',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://maurya-tech.com/logo.png',
+      },
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `https://maurya-tech.com/blog/${post.slug || post.id}`,
+    },
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
+      />
+      <BlogPostPage post={post} relatedPosts={related} />
+    </>
+  );
 }

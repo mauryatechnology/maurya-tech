@@ -142,7 +142,7 @@ export function AboutPage({ aboutData: serverAboutData }) {
                             Ready to Partner with Us?
                         </h2>
                         <p className="text-lg text-hero-muted mb-8">
-                            Let's discuss how we can help you build your next product.
+                            Let&apos;s discuss how we can help you build your next product.
                         </p>
                         <Link href="/contact">
                             <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90">

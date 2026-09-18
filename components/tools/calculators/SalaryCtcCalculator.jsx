@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
+import Link from 'next/link';
 import { NumericInput } from '@/components/tools/NumericInput';
 import { CalculatorContainer } from '@/components/tools/CalculatorContainer';
 import { Wallet, TrendingDown, ArrowDownRight, ShieldCheck, Sparkles, Building2, HelpCircle } from 'lucide-react';
@@ -304,14 +305,12 @@ export function SalaryCtcCalculator({
             </p>
             <div className="pt-1 flex items-center justify-between">
               <span className="text-xs font-extrabold text-slate-900">Only ₹199</span>
-              <button
-                onClick={() => {
-                  window.location.href = '/contact?ref=salary-pack';
-                }}
-                className="px-4 py-2 rounded-xl bg-[#0A2540] hover:bg-slate-800 text-white font-semibold text-xs transition cursor-pointer shadow-xs"
+              <Link
+                href="/contact?ref=salary-pack"
+                className="px-4 py-2 rounded-xl bg-[#0A2540] hover:bg-slate-800 text-white font-semibold text-xs transition cursor-pointer shadow-xs inline-block"
               >
                 Get Negotiation Pack
-              </button>
+              </Link>
             </div>
           </div>
         </div>

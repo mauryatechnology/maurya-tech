@@ -136,7 +136,7 @@ export default function AdminServicesPage() {
             Services & Offerings CMS
           </h1>
           <p className="text-slate-400 text-sm mt-1">
-            Manage your company's core software engineering services, features, and tech stacks
+            Manage your company&apos;s core software engineering services, features, and tech stacks
           </p>
         </div>
         <button
@@ -157,7 +157,7 @@ export default function AdminServicesPage() {
           </div>
         ) : services.length === 0 ? (
           <div className="col-span-full p-12 text-center text-slate-500 text-sm bg-slate-900 rounded-2xl border border-slate-800">
-            No services found. Click "Add New Service" or Seed Database from Settings.
+            No services found. Click &ldquo;Add New Service&rdquo; or Seed Database from Settings.
           </div>
         ) : (
           services.map((s) => (

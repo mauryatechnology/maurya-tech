@@ -13,6 +13,12 @@ const COUNTRIES = [
   { code: 'uk', name: 'United Kingdom', flag: '🇬🇧', currency: '£ GBP' },
 ];
 
+function setCountryCookie(newCode) {
+  if (typeof document !== 'undefined') {
+    document.cookie = `preferred_country=${newCode}; path=/; max-age=31536000; SameSite=Lax`;
+  }
+}
+
 export function CountryHeader({ currentCountry = 'in', marketName = 'India' }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -23,7 +29,7 @@ export function CountryHeader({ currentCountry = 'in', marketName = 'India' }) {
 
   const handleSwitchCountry = (newCode) => {
     setDropdownOpen(false);
-    document.cookie = `preferred_country=${newCode}; path=/; max-age=31536000; SameSite=Lax`;
+    setCountryCookie(newCode);
 
     // Replace current country prefix in URL if present
     const segments = pathname.split('/');

@@ -16,26 +16,35 @@ import { posts as initialPosts } from '@/data/posts';
 
 export async function POST(req) {
   try {
-    // Content seeding mutates the live database and, when bootstrapping, can
-    // create the first superadmin. It must never be reachable anonymously.
+    await connectToDatabase();
+    const existingUsers = await User.countDocuments();
+
+    // Content seeding mutates the live database. When bootstrapping the first
+    // superadmin (existingUsers === 0), allow authorization via setup secret
+    // or local dev environment. Otherwise strictly require active superadmin token.
     const authUser = await verifyToken(req.cookies.get('admin_token')?.value);
-    if (!authUser || authUser.role !== 'superadmin') {
+    const setupSecret = req.headers.get('x-setup-secret');
+    const cronSecret = process.env.CRON_SECRET;
+    const isSetupAuthorized = existingUsers === 0 && Boolean(
+      (cronSecret && setupSecret === cronSecret) ||
+      (process.env.SEED_ADMIN_PASSWORD && setupSecret === process.env.SEED_ADMIN_PASSWORD) ||
+      process.env.NODE_ENV !== 'production'
+    );
+
+    if (!isSetupAuthorized && (!authUser || authUser.role !== 'superadmin')) {
       logSecurityEvent({
         eventType: 'UNAUTHORIZED_ACCESS_ATTEMPT',
         ip: getClientIp(req),
         endpoint: '/api/admin/seed',
-        details: { role: authUser?.role || 'anonymous' },
+        details: { role: authUser?.role || 'anonymous', existingUsers },
       });
       return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
     }
-
-    await connectToDatabase();
 
     // 1. Bootstrap the primary superadmin only when no user exists at all.
     //    Credentials come from the environment - never hardcoded - and an
     //    existing admin's password/PIN is never overwritten by a re-seed.
     let adminSeedResult = 'Skipped (admin users already present)';
-    const existingUsers = await User.countDocuments();
 
     if (existingUsers === 0) {
       const adminEmail = process.env.SEED_ADMIN_EMAIL;

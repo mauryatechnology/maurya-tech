@@ -11,6 +11,13 @@ export function TurnstileWidget({
   const containerRef = useRef(null);
   const widgetIdRef = useRef(null);
   const [loaded, setLoaded] = useState(false);
+  const onVerifyRef = useRef(onVerify);
+  const onExpireRef = useRef(onExpire);
+
+  useEffect(() => {
+    onVerifyRef.current = onVerify;
+    onExpireRef.current = onExpire;
+  }, [onVerify, onExpire]);
 
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
@@ -19,7 +26,7 @@ export function TurnstileWidget({
 
     // Check if script already loaded
     if (window.turnstile) {
-      setLoaded(true);
+      queueMicrotask(() => setLoaded(true));
       return;
     }
 
@@ -55,13 +62,13 @@ export function TurnstileWidget({
         sitekey: siteKey,
         theme,
         callback: (token) => {
-          if (onVerify) onVerify(token);
+          if (onVerifyRef.current) onVerifyRef.current(token);
         },
         'expired-callback': () => {
-          if (onExpire) onExpire();
+          if (onExpireRef.current) onExpireRef.current();
         },
         'error-callback': () => {
-          if (onExpire) onExpire();
+          if (onExpireRef.current) onExpireRef.current();
         },
       });
     } catch (err) {

@@ -8,10 +8,19 @@ export async function GET(req) {
   try {
     await connectToDatabase();
     const { searchParams } = new URL(req.url);
-    const all = searchParams.get('all') === 'true';
+    const requestedAll = searchParams.get('all') === 'true';
     const category = searchParams.get('category');
 
-    const filter = all ? {} : { isPublished: true };
+    let showAll = false;
+    if (requestedAll) {
+      const token = req.cookies.get('admin_token')?.value;
+      const authUser = await verifyToken(token);
+      if (authUser && hasPermission(authUser.role, ROLES.EDITOR)) {
+        showAll = true;
+      }
+    }
+
+    const filter = showAll ? {} : { isPublished: true };
     if (category && category !== 'All') {
       filter.category = category;
     }

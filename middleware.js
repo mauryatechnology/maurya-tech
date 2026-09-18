@@ -44,8 +44,8 @@ export async function middleware(request) {
   const { pathname } = request.nextUrl;
   const method = request.method;
 
-  // 1. Enterprise Anti-CSRF & Origin Verification on API Mutations
-  if (pathname.startsWith('/api/')) {
+  // 1. Enterprise Anti-CSRF & Origin Verification on API Mutations (Excluding server-to-server webhooks)
+  if (pathname.startsWith('/api/') && !pathname.startsWith('/api/webhooks/')) {
     const isMutation = ['POST', 'PUT', 'DELETE', 'PATCH'].includes(method);
     if (isMutation) {
       const origin = request.headers.get('origin');

@@ -8,6 +8,7 @@ import { getMarketProfile } from '@/lib/market/getMarketProfile';
 import { getGuideBySlug, getGuidesForCountry } from '@/lib/market/getGuide';
 import { getToolBySlug } from '@/lib/market/getTool';
 import { CrossPromoBanner } from '@/components/pages/careers/CrossPromoBanner';
+import { serializeJsonLd } from '@/lib/utils';
 import {
   ChevronRight,
   Clock,
@@ -132,12 +133,12 @@ export default async function GuideDetailPage({ params }) {
       {/* Structured Data */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(articleSchema) }}
       />
       {faqSchema && (
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+          dangerouslySetInnerHTML={{ __html: serializeJsonLd(faqSchema) }}
         />
       )}
 

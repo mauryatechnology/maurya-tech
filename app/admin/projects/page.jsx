@@ -184,7 +184,7 @@ export default function AdminProjectsPage() {
           </div>
         ) : projects.length === 0 ? (
           <div className="p-12 text-center text-slate-500 text-sm">
-            No projects found. Seed from Settings or click "Add New Project".
+            No projects found. Seed from Settings or click &ldquo;Add New Project&rdquo;.
           </div>
         ) : (
           <div className="overflow-x-auto">

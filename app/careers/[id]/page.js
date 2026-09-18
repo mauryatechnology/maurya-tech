@@ -21,6 +21,8 @@ const getJobById = cache(async (id) => {
     }).lean();
 
     if (dbJob) {
+      const posted = dbJob.createdAt ? new Date(dbJob.createdAt) : new Date();
+      const expires = new Date(posted.getTime() + 90 * 24 * 60 * 60 * 1000);
       return {
         id: dbJob.customId || dbJob.slug || dbJob._id.toString(),
         slug: dbJob.slug || dbJob.customId,
@@ -37,13 +39,25 @@ const getJobById = cache(async (id) => {
         benefits: dbJob.benefits || [],
         isActive: dbJob.isActive,
         createdAt: dbJob.createdAt,
+        datePosted: posted.toISOString(),
+        validThrough: expires.toISOString(),
       };
     }
   } catch (err) {
     console.warn('MongoDB Job detail lookup fallback:', err.message);
   }
 
-  return (fallbackJobs.jobs || []).find((j) => j.id === id || j.slug === id);
+  const fallback = (fallbackJobs.jobs || []).find((j) => j.id === id || j.slug === id);
+  if (fallback) {
+    const posted = fallback.createdAt ? new Date(fallback.createdAt) : new Date('2026-01-01');
+    const expires = new Date(posted.getTime() + 90 * 24 * 60 * 60 * 1000);
+    return {
+      ...fallback,
+      datePosted: posted.toISOString(),
+      validThrough: expires.toISOString(),
+    };
+  }
+  return null;
 });
 
 export async function generateMetadata({ params }) {
@@ -113,8 +127,8 @@ export default async function JobDetail({ params }) {
     '@type': 'JobPosting',
     title: `${job.title} in Bhopal`,
     description: `<p>${job.description}</p><p><strong>Job Location:</strong> Bhopal, Madhya Pradesh, India (Hybrid | First 3 Months Office Mandate)</p><h3>Key Responsibilities:</h3><ul>${(job.responsibilities || []).map((r) => `<li>${r}</li>`).join('')}</ul><h3>Qualifications & Requirements:</h3><ul>${(job.requirements || []).map((req) => `<li>${req}</li>`).join('')}</ul>`,
-    datePosted: job.createdAt ? new Date(job.createdAt).toISOString() : new Date().toISOString(),
-    validThrough: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(),
+    datePosted: job.datePosted,
+    validThrough: job.validThrough,
     employmentType: job.type === 'Internship' ? 'INTERN' : 'FULL_TIME',
     hiringOrganization: {
       '@type': 'Organization',

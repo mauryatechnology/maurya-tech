@@ -8,7 +8,13 @@ import { sendMail, escapeHtml } from '@/lib/emailService';
 export async function POST(request) {
   try {
     const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET;
+    const isProduction = process.env.NODE_ENV === 'production';
     const signature = request.headers.get('x-razorpay-signature');
+
+    if (isProduction && !webhookSecret) {
+      console.error('Razorpay Webhook: Secret is not configured in production.');
+      return NextResponse.json({ error: 'Webhook secret not configured' }, { status: 500 });
+    }
 
     const rawBody = await request.text();
 

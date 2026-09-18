@@ -30,9 +30,24 @@ export async function POST(request) {
     }
 
     const keySecret = process.env.RAZORPAY_KEY_SECRET;
+    const isProduction = process.env.NODE_ENV === 'production';
     const isDemoOrder = orderId.startsWith('demo_order_');
 
-    if (!isDemoOrder && keySecret) {
+    if (isProduction && isDemoOrder) {
+      return NextResponse.json(
+        { error: 'Demo orders are strictly not permitted in production mode.' },
+        { status: 403 }
+      );
+    }
+
+    if (!isDemoOrder) {
+      if (!keySecret) {
+        return NextResponse.json(
+          { error: 'Payment verification secret is not configured.' },
+          { status: 500 }
+        );
+      }
+
       const generatedSignature = crypto
         .createHmac('sha256', keySecret)
         .update(`${orderId}|${paymentId}`)
@@ -58,7 +73,8 @@ export async function POST(request) {
     await order.save();
 
     const product = getProductBySku(order.productSku);
-    const downloadUrl = `https://maurya-tech.com/api/products/download?token=${downloadToken}`;
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://maurya-tech.com';
+    const downloadUrl = `${siteUrl}/api/products/download?token=${downloadToken}`;
 
     // Dispatch automated delivery email via nodemailer
     const emailHtml = `

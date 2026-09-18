@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Mail,
   Building,
@@ -24,7 +24,7 @@ export default function AdminInquiriesPage() {
   const [spamFilter, setSpamFilter] = useState('all');
   const [selectedInquiry, setSelectedInquiry] = useState(null);
 
-  const fetchInquiries = async () => {
+  const fetchInquiries = useCallback(async () => {
     try {
       setLoading(true);
       let url = '/api/inquiries?';
@@ -42,11 +42,11 @@ export default function AdminInquiriesPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [typeFilter, statusFilter, spamFilter]);
 
   useEffect(() => {
     fetchInquiries();
-  }, [typeFilter, statusFilter, spamFilter]);
+  }, [fetchInquiries]);
 
   const handleUpdateStatus = async (inqId, newStatus) => {
     try {

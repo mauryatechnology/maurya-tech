@@ -20,7 +20,10 @@ import Link from 'next/link';
 function AdminLoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirect = searchParams.get('redirect') || '/admin';
+  const rawRedirect = searchParams.get('redirect');
+  const redirect = (rawRedirect && rawRedirect.startsWith('/') && !rawRedirect.startsWith('//') && !rawRedirect.includes('\\'))
+    ? rawRedirect
+    : '/admin';
 
   // Mode: 'login' | 'forgot'
   const [viewMode, setViewMode] = useState('login');

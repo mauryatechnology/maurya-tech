@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import {
   Zap,
   PlusCircle,
@@ -257,7 +258,7 @@ export default function AdminAutomationPage() {
           </div>
         ) : rules.length === 0 ? (
           <div className="p-12 text-center text-slate-500 text-sm">
-            No automation rules configured. Click "Add Automation Rule" to establish topic clustering schedules.
+            No automation rules configured. Click &ldquo;Add Automation Rule&rdquo; to establish topic clustering schedules.
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -509,12 +510,12 @@ export default function AdminAutomationPage() {
                 </div>
 
                 <div className="pt-2 flex items-center gap-3">
-                  <a
+                  <Link
                     href="/admin/blogs"
                     className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 transition shadow-lg shadow-emerald-500/20"
                   >
                     <span>Open in Blog CMS to Review & Publish</span>
-                  </a>
+                  </Link>
                   <button
                     type="button"
                     onClick={() => {

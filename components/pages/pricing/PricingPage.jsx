@@ -253,10 +253,10 @@ export function PricingPage({ pricingData: serverPricingData }) {
                                                             size="lg"
                                                             asChild
                                                         >
-                                                            <a href="/contact" className="flex items-center justify-center cursor-pointer">
+                                                            <Link href="/contact" className="flex items-center justify-center cursor-pointer">
                                                                 Get Started
                                                                 <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                                                            </a>
+                                                            </Link>
                                                         </Button>
                                                     </CardFooter>
                                                 </Card>
@@ -349,10 +349,10 @@ export function PricingPage({ pricingData: serverPricingData }) {
                                         className="cursor-pointer"
                                         asChild
                                     >
-                                        <a href="/contact" className="flex items-center justify-center">
+                                        <Link href="/contact" className="flex items-center justify-center">
                                             Contact Sales Team
                                             <ArrowRight className="w-5 h-5 ml-2" />
-                                        </a>
+                                        </Link>
                                     </Button>
                                     <Button
                                         size="lg"

@@ -27,10 +27,11 @@ export async function GET(req) {
       query.status = status;
     }
     if (search) {
+      const escaped = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       query.$or = [
-        { customerEmail: { $regex: search, $options: 'i' } },
-        { orderId: { $regex: search, $options: 'i' } },
-        { customerName: { $regex: search, $options: 'i' } },
+        { customerEmail: { $regex: escaped, $options: 'i' } },
+        { orderId: { $regex: escaped, $options: 'i' } },
+        { customerName: { $regex: escaped, $options: 'i' } },
       ];
     }
 

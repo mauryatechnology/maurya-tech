@@ -85,13 +85,13 @@ export function ProductDetailPage() {
 
                                 <div className="flex flex-wrap gap-4">
                                     <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90" asChild>
-                                        <a href="/contact">
+                                        <Link href="/contact">
                                             Request Demo
                                             <ArrowRight className="w-5 h-5 ml-2" />
-                                        </a>
+                                        </Link>
                                     </Button>
                                     <Button size="lg" variant="outline" className="border-hero-muted/20 text-hero-foreground hover:bg-hero-muted/10" asChild>
-                                        <a href="/pricing">View Pricing</a>
+                                        <Link href="/pricing">View Pricing</Link>
                                     </Button>
                                 </div>
                             </div>
@@ -376,13 +376,13 @@ export function ProductDetailPage() {
                             <CardContent className="pb-8">
                                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                                     <Button size="lg" className="cursor-pointer" asChild>
-                                        <a href="/contact">
+                                        <Link href="/contact">
                                             Schedule Demo
                                             <ArrowRight className="w-5 h-5 ml-2" />
-                                        </a>
+                                        </Link>
                                     </Button>
                                     <Button size="lg" variant="outline" className="cursor-pointer" asChild>
-                                        <a href="/pricing">View Pricing</a>
+                                        <Link href="/pricing">View Pricing</Link>
                                     </Button>
                                 </div>
                             </CardContent>

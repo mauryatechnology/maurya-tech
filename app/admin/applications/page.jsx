@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Users,
   Search,
@@ -47,7 +47,7 @@ export default function AdminApplicationsPage() {
     loading: false,
   });
 
-  const fetchApplications = async () => {
+  const fetchApplications = useCallback(async () => {
     try {
       setLoading(true);
       let url = '/api/applications?';
@@ -59,16 +59,16 @@ export default function AdminApplicationsPage() {
       if (data.success) {
         setApplications(data.applications || []);
       }
-    } catch (err) {
+    } catch {
       toast.error('Failed to load applications');
     } finally {
       setLoading(false);
     }
-  };
+  }, [statusFilter, search]);
 
   useEffect(() => {
     fetchApplications();
-  }, [statusFilter]);
+  }, [fetchApplications]);
 
   const handleSearch = (e) => {
     e.preventDefault();

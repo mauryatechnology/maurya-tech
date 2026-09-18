@@ -255,7 +255,7 @@ export default function AdminMonetizationPage() {
           </div>
         ) : filteredOffers.length === 0 ? (
           <div className="p-12 text-center text-slate-500 text-sm">
-            No monetization offers found. Click "New Affiliate Deal" to create sponsored partner slots.
+            No monetization offers found. Click &ldquo;New Affiliate Deal&rdquo; to create sponsored partner slots.
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -280,7 +280,7 @@ export default function AdminMonetizationPage() {
                         <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
                           {o.badge}
                         </span>
-                        <span className="text-[11px] text-slate-500">CTA: "{o.ctaText}"</span>
+                        <span className="text-[11px] text-slate-500">CTA: &ldquo;{o.ctaText}&rdquo;</span>
                       </div>
                     </td>
                     <td className="p-4">

@@ -133,13 +133,17 @@ export const Header = () => {
   const [expandedMobile, setExpandedMobile] = useState(null);
 
   useEffect(() => {
-    setMounted(true);
+    queueMicrotask(() => {
+      setMounted(true);
+    });
   }, []);
 
   // Close mobile menu on route change
   useEffect(() => {
-    setIsOpen(false);
-    setExpandedMobile(null);
+    queueMicrotask(() => {
+      setIsOpen(false);
+      setExpandedMobile(null);
+    });
   }, [pathname]);
 
   // The previous scroll position and the menu state live in refs, not state:

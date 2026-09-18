@@ -3,6 +3,7 @@ import "./globals.css";
 import Providers from "./providers";
 import { globalKeywordsList, seoData } from "@/data/seo-keywords";
 import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { serializeJsonLd } from "@/lib/utils";
 import { ThemeScript } from "@/contexts/ThemeContext";
 
@@ -142,6 +143,7 @@ export default function RootLayout({ children }) {
       <body className={`${inter.variable} ${montserrat.variable} ${openSans.variable} ${firaCode.variable} antialiased bg-[#0a0f1d] text-[#f8fafc]`} suppressHydrationWarning>
         <Providers>{children}</Providers>
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

@@ -49,9 +49,11 @@ export const ThemeProvider = ({ children }) => {
   useEffect(() => {
     // One state update on mount: adopt whatever the pre-paint script applied and
     // flag that theme-dependent UI is now safe to render.
-    const applied = readAppliedTheme();
-    setCurrentThemeId(applied);
-    setMounted(true);
+    queueMicrotask(() => {
+      const applied = readAppliedTheme();
+      setCurrentThemeId(applied);
+      setMounted(true);
+    });
   }, []);
 
   const setTheme = useCallback((themeId) => {

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -37,6 +37,15 @@ export function CheckoutModal({
   const [purchased, setPurchased] = useState(false);
   const [downloadUrl, setDownloadUrl] = useState('');
 
+  useEffect(() => {
+    if (typeof window !== 'undefined' && !window.Razorpay) {
+      const script = document.createElement('script');
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  }, []);
+
   const handleCheckout = async (e) => {
     e.preventDefault();
     if (!email) {
@@ -67,8 +76,8 @@ export function CheckoutModal({
 
       const { orderId, isDemoMode, keyId, amount, currency } = checkoutData;
 
-      // 2. Handle payment (Razorpay vs Test Sandbox)
-      if (isDemoMode || !window.Razorpay) {
+      // 2. Handle payment (Razorpay vs Demo Mode)
+      if (isDemoMode) {
         // Immediate sandbox verification
         const verifyRes = await fetch('/api/products/verify', {
           method: 'POST',
@@ -90,6 +99,12 @@ export function CheckoutModal({
         toast.success('Payment verified! Your download is ready.');
       } else {
         // Live Razorpay Checkout
+        if (!window.Razorpay) {
+          setLoading(false);
+          toast.error('Payment gateway is still loading. Please try again in a moment.');
+          return;
+        }
+
         const options = {
           key: keyId,
           amount,

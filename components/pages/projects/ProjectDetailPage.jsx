@@ -398,7 +398,7 @@ export const ProjectDetailPage = ({ project: serverProject }) => {
                         Ready to Build Your Success Story?
                     </h2>
                     <p className="text-accent-foreground/80 text-lg max-w-2xl mx-auto mb-8">
-                        Let's apply the same level of engineering excellence to your next project.
+                        Let&apos;s apply the same level of engineering excellence to your next project.
                     </p>
                     <Link href="/contact">
                         <Button size="lg" variant="secondary" className="text-accent font-bold">

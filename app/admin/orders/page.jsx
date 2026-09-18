@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   ShoppingBag,
   Search,
@@ -24,7 +24,7 @@ export default function AdminOrdersPage() {
   const [actionLoading, setActionLoading] = useState(null);
   const [feedback, setFeedback] = useState(null);
 
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams();
@@ -41,11 +41,11 @@ export default function AdminOrdersPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [statusFilter, search]);
 
   useEffect(() => {
     fetchOrders();
-  }, [statusFilter]);
+  }, [fetchOrders]);
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();

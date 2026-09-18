@@ -2,22 +2,16 @@
 import * as React from "react";
 import * as LabelPrimitive from "@radix-ui/react-label";
 import { Slot } from "@radix-ui/react-slot";
-import { Controller, ControllerProps, FieldPath, FieldValues, FormProvider, useFormContext } from "react-hook-form";
+import { Controller, FormProvider, useFormContext } from "react-hook-form";
 
 import { cn } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
 
 const Form = FormProvider;
 
-;
+const FormFieldContext = React.createContext({});
 
-const FormFieldContext = React.createContext({} as FormFieldContextValue);
-
-const FormField = <
-  TFieldValues extends FieldValues = FieldValues,
-  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>({
-  ...props
-}) => {
+const FormField = ({ ...props }) => {
   return (
     <FormFieldContext.Provider value={{ name: props.name }}>
       <Controller {...props} />
@@ -30,17 +24,16 @@ const useFormField = () => {
   const itemContext = React.useContext(FormItemContext);
   const { getFieldState, formState } = useFormContext();
 
-  const fieldState = getFieldState(fieldContext.name, formState);
-
   if (!fieldContext) {
     throw new Error("useFormField should be used within <FormField>");
   }
 
-  const { id } = itemContext;
+  const fieldState = getFieldState(fieldContext.name, formState);
+  const { id } = itemContext || {};
 
   return {
     id,
-    name,
+    name: fieldContext.name,
     formItemId: `${id}-form-item`,
     formDescriptionId: `${id}-form-item-description`,
     formMessageId: `${id}-form-item-message`,
@@ -48,9 +41,7 @@ const useFormField = () => {
   };
 };
 
-;
-
-const FormItemContext = React.createContext({} as FormItemContextValue);
+const FormItemContext = React.createContext({});
 
 const FormItem = React.forwardRef(
   ({ className, ...props }, ref) => {

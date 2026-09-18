@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { Layout } from '@/components/layout';
 import { Section } from '@/components/sections';
 import { useData } from '@/contexts/DataContext';
@@ -170,7 +171,7 @@ export function ProductsPage({ productsData: serverProductsData }) {
                                 >
                                     <p className="text-sm text-muted-foreground">
                                         Showing <span className="font-semibold text-accent">{activeCategory?.title}</span>
-                                        {searchQuery && <> matching "<span className="font-semibold text-foreground">{searchQuery}</span>"</>}
+                                        {searchQuery && <> matching &ldquo;<span className="font-semibold text-foreground">{searchQuery}</span>&rdquo;</>}
                                     </p>
                                 </motion.div>
                             )}
@@ -182,7 +183,7 @@ export function ProductsPage({ productsData: serverProductsData }) {
                                     className="text-center"
                                 >
                                     <p className="text-sm text-muted-foreground">
-                                        Searching across all categories for "<span className="font-semibold text-accent">{searchQuery}</span>"
+                                        Searching across all categories for &ldquo;<span className="font-semibold text-accent">{searchQuery}</span>&rdquo;
                                     </p>
                                 </motion.div>
                             )}
@@ -318,10 +319,10 @@ export function ProductsPage({ productsData: serverProductsData }) {
                                         className="cursor-pointer"
                                         asChild
                                     >
-                                        <a href="/contact">
+                                        <Link href="/contact">
                                             Request a Demo
                                             <ArrowRight className="w-5 h-5 ml-2" />
-                                        </a>
+                                        </Link>
                                     </Button>
                                     <Button
                                         size="lg"
@@ -329,7 +330,7 @@ export function ProductsPage({ productsData: serverProductsData }) {
                                         className="cursor-pointer"
                                         asChild
                                     >
-                                        <a href="/pricing">View Pricing Plans</a>
+                                        <Link href="/pricing">View Pricing Plans</Link>
                                     </Button>
                                 </div>
                             </CardContent>

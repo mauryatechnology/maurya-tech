@@ -82,13 +82,25 @@ export async function PUT(req, { params }) {
       qualityScore: existingPost.qualityScore || 0,
     });
 
-    // 3. Update post and increment version
+    // 3. Update post with whitelisted fields and increment version
+    const allowedFields = [
+      'title', 'slug', 'content', 'excerpt', 'category', 'tags',
+      'coverImage', 'metaTitle', 'metaDescription', 'isPublished',
+      'status', 'market', 'readingTime', 'author', 'qualityScore'
+    ];
+
+    const safeUpdates = {};
+    for (const field of allowedFields) {
+      if (body[field] !== undefined) {
+        safeUpdates[field] = body[field];
+      }
+    }
+    safeUpdates.version = currentVersion + 1;
+    safeUpdates.updatedAt = new Date();
+
     const updatedPost = await Post.findByIdAndUpdate(
       existingPost._id,
-      {
-        ...body,
-        version: currentVersion + 1,
-      },
+      safeUpdates,
       { new: true }
     );
 

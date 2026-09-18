@@ -10,7 +10,7 @@ import { getToolsForCountry } from '@/lib/market/getTool';
 const SUPPORTED_COUNTRIES = ['in', 'us', 'uk'];
 
 export default async function sitemap() {
-  const baseUrl = 'https://maurya-tech.com';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://maurya-tech.com';
   const currentDate = new Date().toISOString();
 
   // 1. Core agency static routes

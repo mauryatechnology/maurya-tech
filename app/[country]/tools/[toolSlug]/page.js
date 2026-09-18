@@ -12,6 +12,7 @@ import { CgpaCalculator } from '@/components/tools/calculators/CgpaCalculator';
 import { ResumeBuilder } from '@/components/tools/calculators/ResumeBuilder';
 import { UnitConverter } from '@/components/tools/calculators/UnitConverter';
 import { FreelanceRateCalculator } from '@/components/tools/calculators/FreelanceRateCalculator';
+import { serializeJsonLd } from '@/lib/utils';
 
 const SUPPORTED_COUNTRIES = ['in', 'us', 'uk'];
 
@@ -132,12 +133,12 @@ export default async function ToolPage({ params }) {
       {/* Structured Data Scripts */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareSchema) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(softwareSchema) }}
       />
       {faqSchema && (
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+          dangerouslySetInnerHTML={{ __html: serializeJsonLd(faqSchema) }}
         />
       )}
 

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/mongodb';
 import Order from '@/lib/models/Order';
+import { escapeHtml } from '@/lib/emailService';
 
 export async function GET(request) {
   try {
@@ -44,9 +45,9 @@ export async function GET(request) {
         <body>
           <div class="card">
             <h1>Session Confirmed!</h1>
-            <p>Thank you, <strong>${order.customerName || 'Engineer'}</strong>. Your 1-on-1 Senior Tech Career Advisory booking (Order ID: ${order.orderId}) has been registered.</p>
-            <p>Our lead architect will contact you directly at <strong>${order.customerEmail}</strong> within 12 hours with your private calendar slot and pre-session review intake form.</p>
-            <a href="mailto:support@maurya-tech.com?subject=1-on-1 Career Session Booking (${order.orderId})" class="btn">Message Your Advisor</a>
+            <p>Thank you, <strong>${escapeHtml(order.customerName || 'Engineer')}</strong>. Your 1-on-1 Senior Tech Career Advisory booking (Order ID: ${escapeHtml(order.orderId)}) has been registered.</p>
+            <p>Our lead architect will contact you directly at <strong>${escapeHtml(order.customerEmail)}</strong> within 12 hours with your private calendar slot and pre-session review intake form.</p>
+            <a href="mailto:support@maurya-tech.com?subject=1-on-1%20Career%20Session%20Booking%20(${encodeURIComponent(order.orderId)})" class="btn">Message Your Advisor</a>
           </div>
         </body>
         </html>
