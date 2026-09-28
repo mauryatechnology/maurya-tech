@@ -258,6 +258,15 @@ export const toolContent = {
             'Age on a specific date (not today) is what exam and job eligibility rules usually ask for — set the “as on” date accordingly.',
           ],
         },
+        {
+          heading: 'Common reasons to check an exact age',
+          list: [
+            'Exam and government-job eligibility: notifications state a minimum and maximum age “as on” a fixed date, often with relaxations for some categories.',
+            'School admission: many schools require a minimum age on a cut-off date (for example 1 April or 31 March).',
+            'Retirement, pension and insurance: premiums and eligibility often change on a birthday, so the exact number of days matters.',
+            'Date differences: the same calculator counts days between any two dates — notice periods, project durations or how long ago something happened.',
+          ],
+        },
       ],
       blocks: [],
       faqs: [
@@ -458,10 +467,116 @@ export const toolContent = {
         { question: 'What is a day rate?', answer: 'A fixed price for a working day (usually 7–8 hours). Divide your target annual income plus costs by your expected billable days.' },
         { question: 'How often should I raise my rates?', answer: 'Review at least once a year, and raise rates for new clients whenever your pipeline is consistently full.' },
       ],
-      sources: [],
+      sources: [
+        { name: 'IRS — Self-employment tax (US)', url: 'https://www.irs.gov/businesses/small-businesses-self-employed/self-employment-tax-social-security-and-medicare-taxes' },
+        { name: 'GOV.UK — Working for yourself (UK)', url: 'https://www.gov.uk/working-for-yourself' },
+        { name: 'Income Tax Department — Presumptive taxation for professionals (India)', url: 'https://www.incometax.gov.in/' },
+      ],
     },
   },
 };
+
+Object.assign(toolContent, {
+  'us-paycheck-calculator': {
+    author: 'kuldeep-maurya',
+    reviewer: 'editorial-team',
+    lastReviewed: '2026-09-29',
+    US: {
+      summary:
+        'Your paycheck is gross pay minus federal income tax, Social Security (6.2% up to the wage base), Medicare (1.45%, plus 0.9% on high earnings), state income tax and any pre-tax deductions such as 401(k) and health insurance. A single filer earning $75,000 in a state with no income tax takes home about $2,370 every two weeks before other deductions.',
+      sections: [
+        {
+          heading: 'How your paycheck is calculated',
+          paragraphs: [
+            'Step 1: Start from gross pay for the period (salary ÷ number of paychecks, or hourly rate × hours).',
+            'Step 2: Subtract pre-tax deductions. Traditional 401(k) contributions lower the wages subject to federal and state income tax but not Social Security and Medicare. Health, dental and vision premiums paid through a Section 125 cafeteria plan lower all three.',
+            'Step 3: Federal income tax is estimated on annualised taxable wages minus the standard deduction for your filing status, using the 2026 brackets, then divided back into each paycheck.',
+            'Step 4: FICA is 6.2% Social Security on wages up to the annual wage base plus 1.45% Medicare on all wages; an extra 0.9% Additional Medicare Tax applies above $200,000 (single/head of household) or $250,000 (married filing jointly).',
+            'Step 5: State income tax uses that state’s brackets, deduction and exemption. Texas, Florida, Washington, Nevada and Tennessee do not tax wages.',
+          ],
+        },
+        {
+          heading: 'Why your real paycheck may differ',
+          list: [
+            'Your W-4: extra withholding, dependents credit (Step 3) or other income (Step 4) change federal withholding.',
+            'Local and city taxes (e.g. New York City, many Ohio and Pennsylvania localities) are not included.',
+            'State payroll programs such as California SDI, New York SDI/PFL and Washington’s WA Cares/PFML premiums are not included.',
+            'Bonuses are often withheld at a flat supplemental rate rather than through the brackets.',
+            'Roth 401(k) contributions are after-tax: enter them as 0% here and subtract them from take-home yourself.',
+          ],
+        },
+      ],
+      blocks: ['us-filing-status-table', 'us-paycheck-examples'],
+      faqs: [
+        { question: 'How much federal tax is taken out of my paycheck?', answer: 'It depends on filing status and pay. Your annual taxable wages (after pre-tax deductions and the standard deduction) are taxed at 10%, 12%, 22% and higher rates in bands, and the total is spread across your paychecks.' },
+        { question: 'What is the 2026 standard deduction?', answer: '$16,100 for single filers, $32,200 for married couples filing jointly and $24,150 for heads of household.' },
+        { question: 'How much Social Security and Medicare is withheld?', answer: '6.2% Social Security on wages up to the annual wage base ($184,500 in 2026) and 1.45% Medicare on all wages, plus 0.9% Additional Medicare Tax above $200,000 of wages.' },
+        { question: 'Does a 401(k) contribution reduce my taxes?', answer: 'A traditional 401(k) reduces federal and (in most states) state income tax, but not Social Security or Medicare. Each $100 contributed typically lowers take-home pay by less than $100.' },
+        { question: 'Which states have no income tax on wages?', answer: 'Alaska, Florida, Nevada, New Hampshire, South Dakota, Tennessee, Texas, Washington and Wyoming do not tax wages.' },
+        { question: 'Is bi-weekly or semi-monthly pay better?', answer: 'Annual pay is the same. Bi-weekly means 26 smaller paychecks (two months a year have three); semi-monthly means 24 slightly larger paychecks on fixed dates.' },
+        { question: 'Why is my first paycheck of the year different?', answer: 'Deduction elections, benefit premiums and 401(k) percentages often reset in January, and the Social Security wage base restarts each calendar year.' },
+      ],
+      sources: [
+        { name: 'IRS — Federal income tax rates and brackets', url: 'https://www.irs.gov/filing/federal-income-tax-rates-and-brackets' },
+        { name: 'IRS — Publication 15-T (withholding methods)', url: 'https://www.irs.gov/publications/p15t' },
+        { name: 'SSA — Contribution and benefit base', url: 'https://www.ssa.gov/oact/cola/cbb.html' },
+        { name: 'IRS — 401(k) contribution limits', url: 'https://www.irs.gov/retirement-plans/plan-participant-employee/retirement-topics-401k-and-profit-sharing-plan-contribution-limits' },
+      ],
+      hub: { href: '/us/salary', label: 'Annual and hourly salary breakdowns for every common amount' },
+    },
+  },
+
+  'income-tax-calculator': {
+    author: 'kuldeep-maurya',
+    reviewer: 'editorial-team',
+    lastReviewed: '2026-09-29',
+    IN: {
+      summary:
+        'For FY 2025-26 the new regime is better for most salaried people: taxable income up to ₹12 lakh is tax-free and the standard deduction is ₹75,000. The old regime only wins when your deductions — HRA, 80C, 80D, NPS and home-loan interest — are large; this calculator shows the exact break-even for your salary.',
+      sections: [
+        {
+          heading: 'New vs old regime at a glance',
+          list: [
+            'Standard deduction: ₹75,000 (new) vs ₹50,000 (old).',
+            'Section 87A rebate: tax-free up to ₹12 lakh taxable income (new) vs ₹5 lakh (old).',
+            'Deductions: new regime allows almost none (employer NPS under 80CCD(2) is an exception); old regime allows HRA, 80C (₹1.5 lakh), 80D, 80CCD(1B) (₹50,000), home-loan interest under 24(b) (₹2 lakh) and professional tax.',
+            'Slabs: new regime rises in ₹4 lakh steps to 30% above ₹24 lakh; old regime reaches 30% above ₹10 lakh.',
+          ],
+        },
+        {
+          heading: 'How the comparison is calculated',
+          paragraphs: [
+            'Both regimes start from the same gross salary (if you enter CTC, employer PF is removed first). The new regime subtracts only the ₹75,000 standard deduction. The old regime subtracts the ₹50,000 standard deduction plus each deduction you enter, capped at its legal limit.',
+            'HRA exemption is the least of: HRA received, rent paid minus 10% of basic pay, and 50% of basic (metro) or 40% (non-metro). Tax is then computed on each regime’s slabs, with the 87A rebate, marginal relief (new regime), surcharge above ₹50 lakh and 4% cess.',
+          ],
+        },
+        {
+          heading: 'Who should still consider the old regime?',
+          paragraphs: [
+            'Typically people paying high rent in a metro (large HRA exemption) who also use the full ₹1.5 lakh 80C limit, pay health insurance for parents, and have a home loan on a self-occupied house. If your total deductions are below the break-even figure shown above the table, stay with the new regime.',
+            'Salaried taxpayers can choose a regime every year when filing their return, whatever they declared to their employer for TDS. People with business income can switch back to the old regime only once.',
+          ],
+        },
+      ],
+      blocks: ['in-old-slab-table', 'in-slab-table', 'in-regime-examples'],
+      faqs: [
+        { question: 'Which tax regime is better for FY 2025-26?', answer: 'For most salaried employees the new regime, because income up to ₹12 lakh is tax-free and slabs are lower. The old regime wins only when total deductions are large — use the break-even figure in the calculator.' },
+        { question: 'Is the new regime the default?', answer: 'Yes. Unless you opt for the old regime, your employer deducts TDS and your return is processed under the new regime.' },
+        { question: 'Can I switch between regimes every year?', answer: 'Salaried individuals without business income can choose either regime each year while filing their return. Those with business or professional income can switch back to the old regime only once.' },
+        { question: 'Can I claim HRA in the new regime?', answer: 'No. HRA exemption, 80C, 80D, 80CCD(1B) and home-loan interest on a self-occupied property are available only in the old regime.' },
+        { question: 'What is the old-regime 87A rebate?', answer: 'If taxable income is ₹5 lakh or less, a rebate of up to ₹12,500 makes tax zero under the old regime. Under the new regime the limit is ₹12 lakh (rebate up to ₹60,000).' },
+        { question: 'How is HRA exemption calculated?', answer: 'It is the lowest of HRA received, rent paid minus 10% of basic salary, and 50% of basic for metro cities (Delhi, Mumbai, Kolkata, Chennai) or 40% elsewhere.' },
+        { question: 'Is employer NPS contribution deductible in the new regime?', answer: 'Yes. Employer contribution under Section 80CCD(2) is allowed in both regimes (up to 14% of basic + DA in the new regime and 10% in the old). This calculator does not include it.' },
+      ],
+      sources: [
+        { name: 'Income Tax Department — Tax slabs and regimes', url: 'https://www.incometax.gov.in/' },
+        { name: 'Income Tax Department — Deductions under Chapter VI-A', url: 'https://www.incometax.gov.in/iec/foportal/help/individual-business-profession' },
+        { name: 'Union Budget 2025-26 documents', url: 'https://www.indiabudget.gov.in/' },
+      ],
+      hub: { href: '/in/salary', label: 'In-hand salary for every CTC from 4 to 25 LPA' },
+    },
+  },
+});
 
 /** Resolves content for a tool/country with `{doc}` wording localised (resume vs CV). */
 export function getToolContent(slug, countryCode = 'IN') {

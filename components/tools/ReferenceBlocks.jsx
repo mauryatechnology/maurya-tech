@@ -8,6 +8,10 @@ import {
   formatUSD,
   formatGBP,
   formatPct,
+  US_FILING_STATUS,
+  calcUsPaycheck,
+  IN_OLD_REGIME,
+  compareIndiaRegimes,
 } from '@/lib/tax';
 import { salaryPathIfExists } from '@/lib/programmatic/salary';
 
@@ -174,6 +178,63 @@ const BLOCKS = {
       ]}
     />
   ),
+
+  'us-filing-status-table': () => {
+    const statuses = Object.values(US_FILING_STATUS);
+    const rows = US_FILING_STATUS.single.brackets.map((b, i) => [
+      formatPct(b.rate, 0),
+      ...statuses.map((s) => band(s.brackets[i].min, s.brackets[i].max, formatUSD)),
+    ]);
+    rows.push(['Standard deduction', ...statuses.map((s) => formatUSD(s.standardDeduction))]);
+    return <Table caption="2026 federal brackets by filing status (taxable income)" headers={['Rate', ...statuses.map((s) => s.label)]} rows={rows} />;
+  },
+
+  'us-paycheck-examples': () => {
+    const values = [40000, 60000, 75000, 100000, 150000];
+    return (
+      <Table
+        caption="Bi-weekly take-home by salary (single, no state tax, no deductions)"
+        headers={['Salary', 'Gross per paycheck', 'Federal tax', 'FICA', 'Take-home per paycheck']}
+        rows={values.map((g) => {
+          const r = calcUsPaycheck({ grossAnnual: g, periods: 26 });
+          return [
+            linked(salaryPathIfExists('us', g, 'us-annual'), formatUSD(g)),
+            formatUSD(r.perPeriod.gross),
+            formatUSD(r.perPeriod.federalTax),
+            formatUSD(r.perPeriod.socialSecurity + r.perPeriod.medicare),
+            formatUSD(r.perPeriod.net),
+          ];
+        })}
+      />
+    );
+  },
+
+  'in-old-slab-table': () => (
+    <Table
+      caption={`Old regime slabs — ${IN_OLD_REGIME.label}`}
+      headers={['Taxable income', 'Rate']}
+      rows={IN_OLD_REGIME.slabs.map((s) => [band(s.min, s.max, formatINR), s.rate === 0 ? 'Nil' : formatPct(s.rate, 0)])}
+    />
+  ),
+
+  'in-regime-examples': () => {
+    const values = [800000, 1200000, 1500000, 2000000, 3000000];
+    const typical = { hra: 200000, sec80C: 150000, sec80DSelf: 25000, professionalTax: 2400 };
+    const heavy = { ...typical, sec24b: 200000, sec80CCD1B: 50000 };
+    return (
+      <Table
+        caption="Annual tax by gross salary: new regime vs old regime with different deductions"
+        headers={['Gross salary', 'New regime', 'Old: no deductions', 'Old: HRA ₹2L + 80C + 80D', 'Old: + home loan ₹2L + NPS ₹50k']}
+        rows={values.map((g) => [
+          formatINR(g),
+          formatINR(compareIndiaRegimes({ grossSalary: g }).new.tax.total),
+          formatINR(compareIndiaRegimes({ grossSalary: g }).old.tax.total),
+          formatINR(compareIndiaRegimes({ grossSalary: g, deductions: typical }).old.tax.total),
+          formatINR(compareIndiaRegimes({ grossSalary: g, deductions: heavy }).old.tax.total),
+        ])}
+      />
+    );
+  },
 
   'cgpa-table': () => (
     <Table

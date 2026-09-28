@@ -1,5 +1,5 @@
 import { renderOg, OG_SIZE } from '@/lib/seo/og';
-import { buildSalaryPage, isValidSalaryPage } from '@/lib/programmatic/salary';
+import { buildSalaryPage, resolveSalaryPage } from '@/lib/programmatic/salary';
 
 export const alt = 'Salary breakdown';
 export const size = OG_SIZE;
@@ -7,8 +7,8 @@ export const contentType = 'image/png';
 
 export default async function Image({ params }) {
   const { country, slug } = await params;
-  const value = isValidSalaryPage(country, slug);
-  const page = value == null ? null : buildSalaryPage(country, value);
+  const hit = resolveSalaryPage(country, slug);
+  const page = hit ? buildSalaryPage(country, hit.value, hit.set.id) : null;
   return renderOg({
     eyebrow: 'Salary breakdown',
     title: page?.h1 || 'Salary breakdown',

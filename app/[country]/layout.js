@@ -4,6 +4,7 @@ import { getMarketProfile } from '@/lib/market/getMarketProfile';
 import { CountryHeader } from '@/components/layout/CountryHeader';
 import { CountryFooter } from '@/components/layout/CountryFooter';
 import { AdSenseScript } from '@/components/ads/AdSenseScript';
+import { AdRails, MobileAnchor } from '@/components/ads/AdChrome';
 
 const SUPPORTED_COUNTRIES = ['in', 'us', 'uk'];
 
@@ -59,8 +60,12 @@ export default async function CountryLayout({ children, params }) {
     >
       <AdSenseScript market={market} />
       <CountryHeader currentCountry={normalized} marketName={market.name} />
-      <main className="flex-1">{children}</main>
+      <div className="relative flex-1 flex flex-col">
+        <AdRails market={market} />
+        <main className="flex-1">{children}</main>
+      </div>
       <CountryFooter currentCountry={normalized} marketName={market.name} />
+      <MobileAnchor market={market} />
     </div>
   );
 }

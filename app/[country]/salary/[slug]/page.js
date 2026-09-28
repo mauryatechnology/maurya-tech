@@ -4,11 +4,13 @@ import { getMarketProfile } from '@/lib/market/getMarketProfile';
 import { getToolBySlug } from '@/lib/market/getTool';
 import { CALCULATOR_COMPONENTS } from '@/components/tools/registry';
 import { ToolPageProvider } from '@/components/tools/ToolPageContext';
+import { TaxAlertCapture } from '@/components/tools/TaxAlertCapture';
 import { Ad } from '@/components/ads/Ad';
 import { AnswerBox, Breadcrumbs, FaqSection, JsonLd, RelatedLinks, ReviewBox } from '@/components/seo/PageParts';
-import { buildSalaryPage, isValidSalaryPage, neighbours, salaryParams, SALARY_SETS, salaryPagePath } from '@/lib/programmatic/salary';
-import { relatedGuides, relatedTools, SALARY_TOOL_FOR_COUNTRY } from '@/lib/seo/related';
-import { absoluteUrl, breadcrumbSchema, faqSchema } from '@/lib/seo/schema';
+import { buildSalaryPage, resolveSalaryPage, neighbours, salaryParams, salaryPagePath } from '@/lib/programmatic/salary';
+import { relatedGuides, relatedTools } from '@/lib/seo/related';
+import { absoluteUrl, breadcrumbSchema, faqSchema, reviewedWebPageSchema } from '@/lib/seo/schema';
+import { getAuthor } from '@/data/authors';
 import { TAX_RULES } from '@/lib/tax';
 
 export const dynamicParams = false;
@@ -21,10 +23,10 @@ const LOCALE = { in: 'en_IN', us: 'en_US', uk: 'en_GB' };
 
 export async function generateMetadata({ params }) {
   const { country, slug } = await params;
-  const value = isValidSalaryPage(country, slug);
-  if (value == null) return {};
-  const page = buildSalaryPage(country, value);
-  const url = absoluteUrl(salaryPagePath(country, value));
+  const hit = resolveSalaryPage(country, slug);
+  if (!hit) return {};
+  const page = buildSalaryPage(country, hit.value, hit.set.id);
+  const url = absoluteUrl(salaryPagePath(country, hit.value, hit.set.id));
   return {
     title: page.title,
     description: page.description,
@@ -60,15 +62,14 @@ function DataTable({ headers, rows, caption }) {
 
 export default async function SalaryValuePage({ params }) {
   const { country, slug } = await params;
-  const value = isValidSalaryPage(country, slug);
-  if (value == null) notFound();
+  const hit = resolveSalaryPage(country, slug);
+  if (!hit) notFound();
+  const { set, value } = hit;
 
   const market = await getMarketProfile(country);
-  const page = buildSalaryPage(country, value);
-  const set = SALARY_SETS[country];
-  const path = salaryPagePath(country, value);
-  const toolSlug = SALARY_TOOL_FOR_COUNTRY[country];
-  const tool = await getToolBySlug(toolSlug, country);
+  const page = buildSalaryPage(country, value, set.id);
+  const path = salaryPagePath(country, value, set.id);
+  const tool = await getToolBySlug(set.toolSlug, country);
   const Calculator = tool ? CALCULATOR_COMPONENTS[tool.slug] : null;
   const rules = TAX_RULES[country.toUpperCase()];
 
@@ -77,13 +78,26 @@ export default async function SalaryValuePage({ params }) {
     { name: 'Salary breakdowns', href: `/${country}/salary` },
     { name: set.label(value), href: path },
   ];
-  const nearby = neighbours(country, value, 5).map((v) => ({ name: set.label(v), href: salaryPagePath(country, v) }));
-  const initialProps =
-    country === 'in' ? { initialCtc: value * 100000 } : country === 'us' ? { initialHourlyRate: value } : { initialCtc: value };
+  const nearby = neighbours(country, value, 5, set.id).map((v) => ({ name: set.label(v), href: salaryPagePath(country, v, set.id) }));
+  const isIndia = set.id === 'in-lpa';
+  const taxCaption = page.taxCaption || 'Tax breakdown: W-2 employee vs 1099 contractor (2026, single)';
 
   return (
     <div className="bg-slate-50 pb-20">
-      <JsonLd data={[breadcrumbSchema(crumbs), faqSchema(page.faqs)]} />
+      <JsonLd
+        data={[
+          breadcrumbSchema(crumbs),
+          faqSchema(page.faqs),
+          reviewedWebPageSchema({
+            name: page.title,
+            description: page.description,
+            url: path,
+            lastReviewed: rules.lastReviewed,
+            author: getAuthor('kuldeep-maurya'),
+            reviewer: getAuthor('editorial-team'),
+          }),
+        ]}
+      />
       <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         <Breadcrumbs items={crumbs} />
         <header className="space-y-3">
@@ -93,17 +107,18 @@ export default async function SalaryValuePage({ params }) {
 
         <AnswerBox>{page.answer}</AnswerBox>
 
-        {country === 'in' ? (
+        {isIndia ? (
           <DataTable caption="Full breakdown (annual)" rows={page.rows} />
         ) : (
           <DataTable caption="Pay breakdown" headers={page.rowHeaders} rows={page.rows} />
         )}
 
-        {country === 'in' && <DataTable caption="Take-home by period" rows={page.periods} />}
+        {isIndia && <DataTable caption="Take-home by period" rows={page.periods} />}
 
         <Ad market={market} placement="article" minHeight={280} />
 
-        {page.taxRows && <DataTable caption="Tax breakdown: W-2 employee vs 1099 contractor (2026, single)" headers={page.taxHeaders} rows={page.taxRows} />}
+        {page.taxRows && <DataTable caption={taxCaption} headers={page.taxHeaders} rows={page.taxRows} />}
+        {page.stateRows && <DataTable caption="Take-home in different states (single filer, 2026 federal)" headers={page.stateHeaders} rows={page.stateRows} />}
         {page.schedules && <DataTable caption="Annual pay on other schedules" headers={['Schedule', 'Annual gross']} rows={page.schedules} />}
 
         <section className="space-y-3">
@@ -116,7 +131,7 @@ export default async function SalaryValuePage({ params }) {
         {Calculator && (
           <section className="space-y-3 -mx-4 sm:-mx-6 lg:-mx-8">
             <ToolPageProvider embedded>
-              <Calculator country={country} countryName={market.name} tool={tool} {...initialProps} />
+              <Calculator country={country} countryName={market.name} tool={tool} {...set.initialProps(value)} />
             </ToolPageProvider>
           </section>
         )}
@@ -141,7 +156,9 @@ export default async function SalaryValuePage({ params }) {
 
         <ReviewBox authorSlug="kuldeep-maurya" reviewerSlug="editorial-team" lastReviewed={rules.lastReviewed} sources={rules.sources} />
 
-        <RelatedLinks tools={relatedTools(toolSlug, country, 4)} guides={relatedGuides({ country, toolSlug, limit: 2 })} />
+        <TaxAlertCapture country={country} source={path} />
+
+        <RelatedLinks tools={relatedTools(set.toolSlug, country, 4)} guides={relatedGuides({ country, toolSlug: set.toolSlug, limit: 2 })} />
       </article>
     </div>
   );

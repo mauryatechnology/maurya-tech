@@ -8,7 +8,8 @@ import { defaultGuides } from '@/data/guides';
 import { toolContent } from '@/data/toolContent';
 import { defaultCountries } from '@/data/countries';
 import { runQualityGate } from '@/lib/content/qualityGate';
-import { SALARY_SETS } from '@/lib/programmatic/salary';
+import { runPageGate } from '@/lib/content/pageGate';
+import { SALARY_SET_LIST } from '@/lib/programmatic/salary';
 import { GLOBAL_TOOL_SLUGS } from '@/lib/seo/related';
 import { ADS_ENABLED, ADSENSE_CLIENT } from '@/lib/ads/config';
 import { TAX_RULES } from '@/lib/tax';
@@ -41,7 +42,7 @@ export async function GET(req) {
   const countryToolPages = tools
     .filter((t) => !GLOBAL_TOOL_SLUGS.includes(t.slug))
     .reduce((n, t) => n + (t.countries || []).length, 0);
-  const salaryPages = Object.values(SALARY_SETS).reduce((n, s) => n + s.values.length, 0);
+  const salaryPages = SALARY_SET_LIST.reduce((n, s) => n + s.values.length, 0);
   const publishedPosts = dbPosts.filter((p) => p.isPublished);
   const inventory = {
     globalToolPages: GLOBAL_TOOL_SLUGS.length,
@@ -114,5 +115,13 @@ export async function GET(req) {
     ...countries.map((c) => ({ key: `Market ${c.code} ad network (${c.source})`, ok: c.adNetwork === 'adsense', hint: `Currently "${c.adNetwork}" — set to adsense in /admin/markets` })),
   ];
 
-  return NextResponse.json({ success: true, inventory, freshness, quality, orphans, config, generatedAt: new Date().toISOString() });
+  // Tool pages + programmatic salary pages
+  const gate = runPageGate();
+  const pageGate = {
+    total: gate.total,
+    byType: gate.results.reduce((acc, r) => ({ ...acc, [r.type]: (acc[r.type] || 0) + 1 }), {}),
+    failing: gate.failing.map((r) => ({ path: r.path, type: r.type, title: r.title, failing: r.failing })),
+  };
+
+  return NextResponse.json({ success: true, inventory, freshness, quality, pageGate, orphans, config, generatedAt: new Date().toISOString() });
 }

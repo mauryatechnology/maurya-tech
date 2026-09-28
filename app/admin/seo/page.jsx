@@ -89,7 +89,23 @@ export default function AdminSeoPage() {
             </ul>
           </Card>
 
-          <Card title={`Quality Gate (${data.quality.filter((q) => !q.passed).length} failing)`}>
+          <Card title={`Generated pages gate — tools & salary pages (${data.pageGate.failing.length} of ${data.pageGate.total} failing)`}>
+            <p className="text-xs text-slate-400">
+              Checks title (20–60) and description (70–160) length, unique titles, answer-first summary, FAQ count, content depth, sources and review freshness.
+              {' '}{Object.entries(data.pageGate.byType).map(([k, v]) => `${v} ${k} pages`).join(' · ')}
+            </p>
+            {data.pageGate.failing.length === 0 ? (
+              <p className="text-xs text-emerald-400 flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4" /> All generated pages pass.</p>
+            ) : (
+              <ul className="space-y-1 text-xs text-slate-300">
+                {data.pageGate.failing.map((f) => (
+                  <li key={f.path}><span className="font-mono">{f.path}</span> <span className="text-amber-400">— {f.failing.join(', ')}</span></li>
+                ))}
+              </ul>
+            )}
+          </Card>
+
+          <Card title={`Guides & posts Quality Gate (${data.quality.filter((q) => !q.passed).length} failing)`}>
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead className="text-slate-400">

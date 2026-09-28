@@ -8,6 +8,8 @@ import { CgpaCalculator } from '@/components/tools/calculators/CgpaCalculator';
 import { ResumeBuilder } from '@/components/tools/calculators/ResumeBuilder';
 import { UnitConverter } from '@/components/tools/calculators/UnitConverter';
 import { FreelanceRateCalculator } from '@/components/tools/calculators/FreelanceRateCalculator';
+import { UsPaycheckCalculator } from '@/components/tools/calculators/UsPaycheckCalculator';
+import { IncomeTaxNewVsOldCalculator } from '@/components/tools/calculators/IncomeTaxNewVsOldCalculator';
 
 /** slug → interactive calculator component. Add new tools here. */
 export const CALCULATOR_COMPONENTS = {
@@ -21,4 +23,6 @@ export const CALCULATOR_COMPONENTS = {
   'resume-builder': ResumeBuilder,
   'unit-converter': UnitConverter,
   'freelance-rate-calculator': FreelanceRateCalculator,
+  'us-paycheck-calculator': UsPaycheckCalculator,
+  'income-tax-calculator': IncomeTaxNewVsOldCalculator,
 };

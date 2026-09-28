@@ -3,12 +3,23 @@
 import React, { useEffect, useRef, useState } from 'react';
 
 /**
- * Responsive AdSense unit.
- * - Reserves its height before the ad loads → no layout shift (CLS).
- * - Only requests an ad when it is ~300px from the viewport.
+ * AdSense unit.
+ * - `size` omitted → responsive in-content unit with a reserved min-height.
+ * - `size={{ width, height }}` → fixed-size unit (rails, anchor) whose box is reserved
+ *   exactly, so it can never shift layout (CLS = 0).
+ * - Requests an ad only when within ~300px of the viewport.
  * - Renders nothing when `enabled` is false (decided server-side from env + market).
  */
-export function AdSlot({ enabled = false, client, slot, placement = 'content', minHeight = 280, className = '' }) {
+export function AdSlot({
+  enabled = false,
+  client,
+  slot,
+  placement = 'content',
+  minHeight = 280,
+  size = null,
+  showLabel = true,
+  className = '',
+}) {
   const ref = useRef(null);
   const pushed = useRef(false);
   const [visible, setVisible] = useState(false);
@@ -41,6 +52,26 @@ export function AdSlot({ enabled = false, client, slot, placement = 'content', m
 
   if (!enabled || !slot) return null;
 
+  const label = showLabel ? <p className="text-[10px] uppercase tracking-wider text-slate-400 text-center mb-1">Advertisement</p> : null;
+
+  if (size) {
+    return (
+      <aside ref={ref} aria-label="Advertisement" data-placement={placement} className={className} style={{ width: size.width }}>
+        {label}
+        <div style={{ width: size.width, height: size.height }} className="overflow-hidden">
+          {visible && (
+            <ins
+              className="adsbygoogle"
+              style={{ display: 'inline-block', width: size.width, height: size.height }}
+              data-ad-client={client}
+              data-ad-slot={slot}
+            />
+          )}
+        </div>
+      </aside>
+    );
+  }
+
   return (
     <aside
       ref={ref}
@@ -49,7 +80,7 @@ export function AdSlot({ enabled = false, client, slot, placement = 'content', m
       className={`my-8 w-full overflow-hidden ${className}`}
       style={{ minHeight }}
     >
-      <p className="text-[10px] uppercase tracking-wider text-slate-400 text-center mb-1">Advertisement</p>
+      {label}
       {visible && (
         <ins
           className="adsbygoogle"

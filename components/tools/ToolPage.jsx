@@ -14,7 +14,8 @@ import {
 } from '@/components/seo/PageParts';
 import { getToolContent } from '@/data/toolContent';
 import { getAuthor } from '@/data/authors';
-import { breadcrumbSchema, faqSchema, softwareAppSchema } from '@/lib/seo/schema';
+import { breadcrumbSchema, faqSchema, softwareAppSchema, reviewedWebPageSchema } from '@/lib/seo/schema';
+import { TaxAlertCapture } from '@/components/tools/TaxAlertCapture';
 import { relatedGuides, relatedTools, salaryLinks } from '@/lib/seo/related';
 
 /**
@@ -40,6 +41,16 @@ export function ToolPage({ tool, market, country, path, breadcrumbs }) {
     }),
     breadcrumbSchema(breadcrumbs),
     faqSchema(faqs),
+    content
+      ? reviewedWebPageSchema({
+          name: tool.seo?.title || tool.name,
+          description: tool.seo?.description,
+          url: path,
+          lastReviewed: content.lastReviewed,
+          author: getAuthor(content.author),
+          reviewer: content.reviewer ? getAuthor(content.reviewer) : null,
+        })
+      : null,
   ];
 
   const tools = relatedTools(tool.slug, linkCountry, 4);
@@ -91,6 +102,8 @@ export function ToolPage({ tool, market, country, path, breadcrumbs }) {
         <RelatedLinks tools={tools} guides={guides} />
 
         <Ad market={market} placement="toolBottom" minHeight={250} />
+
+        <TaxAlertCapture country={country || 'global'} source={path} />
       </div>
     </div>
   );

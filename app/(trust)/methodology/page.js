@@ -13,8 +13,15 @@ export const metadata = {
 export default function MethodologyPage() {
   const crumbs = [{ name: 'Home', href: '/' }, { name: 'Methodology', href: '/methodology' }];
   const markets = [
-    { code: 'IN', name: 'India', notes: ['Gross salary = CTC − employer PF (and gratuity if included in CTC).', 'Taxable income = gross − ₹75,000 standard deduction; no HRA/80C under the new regime.', 'Section 87A rebate up to ₹60,000 for taxable income ≤ ₹12 lakh, with marginal relief just above it; 4% cess; surcharge above ₹50 lakh.', 'Default assumptions: basic = 50% of CTC, PF capped at ₹1,800/month, ₹2,400 professional tax.'] },
-    { code: 'US', name: 'United States', notes: ['Federal income tax on (gross − standard deduction) using single-filer brackets.', 'W-2: 6.2% Social Security up to the wage base + 1.45% Medicare (+0.9% above $200,000).', '1099: self-employment tax on 92.35% of net earnings, half of it deducted before income tax.', 'State and local tax excluded unless you enter a rate.'] },
+    { code: 'IN', name: 'India', notes: ['Gross salary = CTC − employer PF (and gratuity if included in CTC).', 'Taxable income = gross − ₹75,000 standard deduction; no HRA/80C under the new regime.', 'Section 87A rebate up to ₹60,000 for taxable income ≤ ₹12 lakh, with marginal relief just above it; 4% cess; surcharge above ₹50 lakh.', 'Default assumptions: basic = 50% of CTC, PF capped at ₹1,800/month, ₹2,400 professional tax.', 'Old regime (comparison calculator): ₹50,000 standard deduction; HRA exemption = least of HRA received, rent − 10% of basic, 50%/40% of basic; 80C ≤ ₹1.5 lakh, 80CCD(1B) ≤ ₹50,000, 80D ≤ ₹25,000 + ₹50,000 (parents 60+), 24(b) ≤ ₹2 lakh, professional tax ≤ ₹2,500; 87A rebate up to ₹12,500 for taxable income ≤ ₹5 lakh; individuals below 60; surcharge marginal relief not applied.'] },
+    { code: 'US', name: 'United States', notes: [
+      'Federal income tax on (gross − pre-tax deductions − standard deduction) using the 2026 brackets for single, married filing jointly or head of household.',
+      'W-2: 6.2% Social Security up to the wage base + 1.45% Medicare, plus 0.9% Additional Medicare Tax above $200,000 (single/head of household) or $250,000 (joint).',
+      'Traditional 401(k) reduces income-tax wages but not FICA wages; Section 125 health premiums reduce both.',
+      '1099: self-employment tax on 92.35% of net earnings, half of it deducted before income tax.',
+      'State income tax (paycheck calculator): California, New York and Illinois use each state’s published brackets, deduction/exemption and credits — the table year is shown next to the state and may lag the federal year. Texas, Florida, Washington, Nevada and Tennessee do not tax wages. Head-of-household filers use single brackets for California and Illinois.',
+      'Not included: city/local taxes (e.g. NYC), state disability and paid-leave payroll premiums (CA SDI, NY SDI/PFL, WA Cares/PFML), and extra W-4 withholding.',
+    ] },
     { code: 'UK', name: 'United Kingdom', notes: ['Personal Allowance of £12,570, tapered by £1 for every £2 above £100,000.', 'Income Tax bands for England, Wales and Northern Ireland; Scottish rates are not applied.', 'Employee Class 1 National Insurance: 8% between £12,570 and £50,270, 2% above.', 'Assumes a 1257L tax code and no pension, student loan or benefits in kind.'] },
   ];
 

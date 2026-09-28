@@ -323,8 +323,39 @@ export const defaultTools = [
     status: 'published',
     enabled: true,
   },
+  {
+    slug: 'us-paycheck-calculator',
+    name: 'US Paycheck Calculator',
+    category: 'salary',
+    countries: ['US'],
+    scope: 'COUNTRY_EXCLUSIVE',
+    computeConfig: { engine: 'lib/tax', rules: ['US'] }, // rates: lib/tax/us.js
+    seo: {
+      title: 'Paycheck Calculator 2026: Take-Home Pay by State',
+      description: 'Take-home pay per paycheck after 2026 federal tax, Social Security, Medicare, state tax, 401(k) and health insurance — single, joint or head of household.',
+      primaryKeyword: 'paycheck calculator',
+      faqSchema: [],
+    },
+    status: 'published',
+    enabled: true,
+  },
+  {
+    slug: 'income-tax-calculator',
+    name: 'Income Tax Calculator: New vs Old Regime',
+    category: 'salary',
+    countries: ['IN'],
+    scope: 'COUNTRY_EXCLUSIVE',
+    computeConfig: { engine: 'lib/tax', rules: ['IN'] }, // rates: lib/tax/index.js + indiaOld.js
+    seo: {
+      title: 'Income Tax Calculator FY 2025-26: New vs Old Regime',
+      description: 'Compare new vs old regime tax for FY 2025-26 with HRA, 80C, 80D, NPS and home-loan interest. See taxable income, cess and how much each regime saves.',
+      primaryKeyword: 'income tax calculator new vs old regime',
+      faqSchema: [],
+    },
+    status: 'published',
+    enabled: true,
+  },
 ];
-
 
 /** Applies a tool's per-country name/SEO overrides. */
 export function localizeTool(tool, countryCode) {

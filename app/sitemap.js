@@ -10,7 +10,7 @@ import { toolContent } from '@/data/toolContent';
 import { getToolsForCountry } from '@/lib/market/getTool';
 import { getGuidesForCountry } from '@/lib/market/getGuide';
 import { GLOBAL_TOOL_SLUGS } from '@/lib/seo/related';
-import { SALARY_SETS, salaryPagePath } from '@/lib/programmatic/salary';
+import { setsForCountry, salaryPagePath } from '@/lib/programmatic/salary';
 import { TAX_RULES } from '@/lib/tax';
 
 const SUPPORTED_COUNTRIES = ['in', 'us', 'uk'];
@@ -71,11 +71,13 @@ export default async function sitemap() {
       console.warn(`Sitemap guide lookup error for ${country}:`, err.message);
     }
 
-    const set = SALARY_SETS[country];
-    if (set) {
+    const sets = setsForCountry(country);
+    if (sets.length) {
       const reviewed = TAX_RULES[country.toUpperCase()].lastReviewed;
       routes.push(entry(`/${country}/salary`, reviewed, 0.8));
-      for (const v of set.values) routes.push(entry(salaryPagePath(country, v), reviewed, 0.7));
+      for (const set of sets) {
+        for (const v of set.values) routes.push(entry(salaryPagePath(country, v, set.id), reviewed, 0.7));
+      }
     }
   }
 
