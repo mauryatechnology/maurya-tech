@@ -5,7 +5,9 @@ import Link from 'next/link';
 import { Calculator, FileText, Sparkles, ArrowRight, ShieldCheck } from 'lucide-react';
 import { CheckoutModal } from '@/components/products/CheckoutModal';
 
-export function CrossPromoBanner({ variant = 'full' }) {
+const SALARY_TOOL = { in: '/in/tools/ctc-calculator', us: '/us/tools/hourly-to-annual-salary', uk: '/uk/tools/ctc-calculator' };
+
+export function CrossPromoBanner({ variant = 'full', country = 'in' }) {
   const [modalOpen, setModalOpen] = useState(false);
 
   return (
@@ -24,18 +26,18 @@ export function CrossPromoBanner({ variant = 'full' }) {
               Level Up Your Tech Interviews & Compensation
             </h3>
             <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-              Applying for software roles? Check your true monthly in-hand take-home pay with our free 2026 CTC engine, or grab our ATS-proven resume templates with salary negotiation scripts.
+              Applying for software roles? Check your real monthly take-home pay with our free salary calculator, or grab our ATS-proven resume templates with salary negotiation scripts.
             </p>
           </div>
 
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-auto shrink-0">
             {/* Free Tool CTA */}
             <Link
-              href="/in/tools/ctc-calculator"
+              href={SALARY_TOOL[country] || SALARY_TOOL.in}
               className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold border border-white/20 shadow-xs transition"
             >
               <Calculator className="w-4 h-4 text-cyan-400" />
-              <span>Calculate In-Hand Salary</span>
+              <span>Calculate Take-Home Pay</span>
             </Link>
 
             {/* Digital Product CTA */}

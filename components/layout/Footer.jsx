@@ -5,7 +5,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { contacts as contactData } from '@/data/contacts';
 import { Mail, Phone, MapPin, Globe, Github, Linkedin, Facebook, Instagram, Sun, Moon } from 'lucide-react';
-import { seoData } from '@/data/seo-keywords';
 import { useTheme } from '@/contexts/ThemeContext';
 
 const footerLinks = {

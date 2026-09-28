@@ -143,8 +143,7 @@ export function CgpaCalculator({
       category="general"
       badge="Academic Grading"
       description="Convert CGPA to percentage using CBSE & university multipliers, calculate US 4.0 scale GPA for MS/MBA applications, or compute semester SGPA with custom course credits."
-      resultSummaryText={summaryText}
-      faqs={tool?.seo?.faqSchema || []}
+      resultSummaryText={summaryText}
     >
       <div className="space-y-6">
         {/* Mode Selector Tabs */}

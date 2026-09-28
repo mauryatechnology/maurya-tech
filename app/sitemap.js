@@ -5,172 +5,107 @@ import Post from '@/lib/models/Post';
 import { jobs as fallbackJobs } from '@/data/jobs';
 import { projects as fallbackProjects } from '@/data/projects';
 import { posts as fallbackPosts } from '@/data/posts';
+import { authors } from '@/data/authors';
+import { toolContent } from '@/data/toolContent';
 import { getToolsForCountry } from '@/lib/market/getTool';
+import { getGuidesForCountry } from '@/lib/market/getGuide';
+import { GLOBAL_TOOL_SLUGS } from '@/lib/seo/related';
+import { SALARY_SETS, salaryPagePath } from '@/lib/programmatic/salary';
+import { TAX_RULES } from '@/lib/tax';
 
 const SUPPORTED_COUNTRIES = ['in', 'us', 'uk'];
 
+// lastModified is only set when we actually know when content changed — an always-"now"
+// date teaches Google to ignore the field for the whole site.
+const iso = (d) => {
+  if (!d) return undefined;
+  const t = new Date(d);
+  return Number.isNaN(t.getTime()) ? undefined : t.toISOString();
+};
+
 export default async function sitemap() {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://maurya-tech.com';
-  const currentDate = new Date().toISOString();
+  const baseUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://maurya-tech.com').replace(/\/$/, '');
+  const entry = (path, lastModified, priority = 0.7) => ({
+    url: `${baseUrl}${path}`,
+    ...(iso(lastModified) ? { lastModified: iso(lastModified) } : {}),
+    priority,
+  });
 
-  // 1. Core agency static routes
-  const staticRoutes = [
-    '',
-    '/about',
-    '/services',
-    '/projects',
-    '/products',
-    '/pricing',
-    '/technologies',
-    '/careers',
-    '/blog',
-    '/contact',
-  ].map((route) => ({
-    url: `${baseUrl}${route}`,
-    lastModified: currentDate,
-    changeFrequency: 'weekly',
-    priority: route === '' ? 1.0 : 0.8,
-  }));
+  const routes = [];
 
-  // 2. Country Hubs and Directory Pages
-  const countryHubRoutes = [];
-  const countryToolRoutes = [];
+  // 1. Agency pages
+  for (const path of ['', '/about', '/services', '/projects', '/products', '/pricing', '/technologies', '/careers', '/blog', '/contact']) {
+    routes.push(entry(path, undefined, path === '' ? 1.0 : 0.6));
+  }
 
+  // 2. Trust pages + global tools
+  routes.push(entry('/methodology', TAX_RULES.IN.lastReviewed, 0.5));
+  routes.push(entry('/editorial-policy', undefined, 0.4));
+  for (const a of authors) routes.push(entry(`/authors/${a.slug}`, undefined, 0.4));
+  routes.push(entry('/tools', undefined, 0.8));
+  for (const slug of GLOBAL_TOOL_SLUGS) routes.push(entry(`/tools/${slug}`, toolContent[slug]?.lastReviewed, 0.9));
+
+  // 3. Country hubs, localized tools, guides, salary breakdowns
   for (const country of SUPPORTED_COUNTRIES) {
-    // Country homepage e.g. /in, /us, /uk
-    countryHubRoutes.push({
-      url: `${baseUrl}/${country}`,
-      lastModified: currentDate,
-      changeFrequency: 'weekly',
-      priority: 0.9,
-    });
+    routes.push(entry(`/${country}`, undefined, 0.9));
+    routes.push(entry(`/${country}/tools`, undefined, 0.8));
+    routes.push(entry(`/${country}/guides`, undefined, 0.7));
 
-    // Country tools directory e.g. /in/tools
-    countryHubRoutes.push({
-      url: `${baseUrl}/${country}/tools`,
-      lastModified: currentDate,
-      changeFrequency: 'weekly',
-      priority: 0.85,
-    });
-
-    // Country guides directory e.g. /in/guides
-    countryHubRoutes.push({
-      url: `${baseUrl}/${country}/guides`,
-      lastModified: currentDate,
-      changeFrequency: 'weekly',
-      priority: 0.85,
-    });
-
-    // Individual calculators for this country
     try {
       const tools = await getToolsForCountry(country);
       for (const tool of tools) {
-        countryToolRoutes.push({
-          url: `${baseUrl}/${country}/tools/${tool.slug}`,
-          lastModified: currentDate,
-          changeFrequency: 'weekly',
-          priority: 0.85,
-        });
+        if (GLOBAL_TOOL_SLUGS.includes(tool.slug)) continue;
+        if (tool.slug === 'cgpa-calculator' && country !== 'in') continue;
+        routes.push(entry(`/${country}/tools/${tool.slug}`, toolContent[tool.slug]?.lastReviewed || tool.updatedAt, 0.9));
       }
-    } catch (toolErr) {
-      console.warn(`Sitemap tool lookup error for ${country}:`, toolErr.message);
+    } catch (err) {
+      console.warn(`Sitemap tool lookup error for ${country}:`, err.message);
     }
 
-    // Individual guides for this country
     try {
-      const { getGuidesForCountry } = await import('@/lib/market/getGuide');
       const guides = await getGuidesForCountry(country);
       for (const guide of guides) {
-        countryToolRoutes.push({
-          url: `${baseUrl}/${country}/guides/${guide.slug}`,
-          lastModified: currentDate,
-          changeFrequency: 'weekly',
-          priority: 0.8,
-        });
+        routes.push(entry(`/${country}/guides/${guide.slug}`, guide.lastReviewed || guide.date, 0.8));
       }
-    } catch (guideErr) {
-      console.warn(`Sitemap guide lookup error for ${country}:`, guideErr.message);
+    } catch (err) {
+      console.warn(`Sitemap guide lookup error for ${country}:`, err.message);
+    }
+
+    const set = SALARY_SETS[country];
+    if (set) {
+      const reviewed = TAX_RULES[country.toUpperCase()].lastReviewed;
+      routes.push(entry(`/${country}/salary`, reviewed, 0.8));
+      for (const v of set.values) routes.push(entry(salaryPagePath(country, v), reviewed, 0.7));
     }
   }
 
-  // 3. Dynamic jobs, projects, and blog articles
-  let dynamicJobRoutes = [];
-  let dynamicProjectRoutes = [];
-  let dynamicBlogRoutes = [];
-
+  // 4. Jobs, projects, blog posts (DB first, static fallback)
+  let jobs = [];
+  let projects = [];
+  let posts = [];
   try {
     await connectToDatabase();
-
     const [dbJobs, dbProjects, dbPosts] = await Promise.all([
       Job.find({ isActive: true }).select('customId slug _id updatedAt').lean(),
       Project.find({ isPublished: true }).select('slug customId _id updatedAt').lean(),
       Post.find({ isPublished: true }).select('slug customId _id updatedAt').lean(),
     ]);
-
-    if (dbJobs && dbJobs.length > 0) {
-      dynamicJobRoutes = dbJobs.map((j) => ({
-        url: `${baseUrl}/careers/${j.customId || j._id}`,
-        lastModified: j.updatedAt ? new Date(j.updatedAt).toISOString() : currentDate,
-        changeFrequency: 'weekly',
-        priority: 0.7,
-      }));
-    }
-
-    if (dbProjects && dbProjects.length > 0) {
-      dynamicProjectRoutes = dbProjects.map((p) => ({
-        url: `${baseUrl}/projects/${p.slug || p.customId || p._id}`,
-        lastModified: p.updatedAt ? new Date(p.updatedAt).toISOString() : currentDate,
-        changeFrequency: 'weekly',
-        priority: 0.75,
-      }));
-    }
-
-    if (dbPosts && dbPosts.length > 0) {
-      dynamicBlogRoutes = dbPosts.map((b) => ({
-        url: `${baseUrl}/blog/${b.slug || b.customId || b._id}`,
-        lastModified: b.updatedAt ? new Date(b.updatedAt).toISOString() : currentDate,
-        changeFrequency: 'weekly',
-        priority: 0.75,
-      }));
-    }
+    jobs = dbJobs.map((j) => entry(`/careers/${j.customId || j._id}`, j.updatedAt, 0.6));
+    projects = dbProjects.map((p) => entry(`/projects/${p.slug || p.customId || p._id}`, p.updatedAt, 0.6));
+    posts = dbPosts.map((b) => entry(`/blog/${b.slug || b.customId || b._id}`, b.updatedAt, 0.6));
   } catch (error) {
     console.warn('Sitemap dynamic query fallback:', error.message);
   }
 
-  // Fallbacks if DB query returned nothing
-  if (dynamicJobRoutes.length === 0) {
-    dynamicJobRoutes = (fallbackJobs.jobs || []).filter((j) => j.isActive).map((job) => ({
-      url: `${baseUrl}/careers/${job.id}`,
-      lastModified: currentDate,
-      changeFrequency: 'weekly',
-      priority: 0.7,
-    }));
+  if (!jobs.length) {
+    jobs = (fallbackJobs.jobs || []).filter((j) => j.isActive).map((job) => entry(`/careers/${job.id}`, job.updatedAt || job.postedDate, 0.6));
+  }
+  if (!projects.length) {
+    projects = (fallbackProjects.projects || []).map((p) => entry(`/projects/${p.slug || p.id}`, p.updatedAt, 0.6));
+  }
+  if (!posts.length) {
+    posts = (fallbackPosts.posts || []).map((p) => entry(`/blog/${p.slug || p.id}`, p.updatedAt || p.date, 0.6));
   }
 
-  if (dynamicProjectRoutes.length === 0) {
-    dynamicProjectRoutes = (fallbackProjects.projects || []).map((project) => ({
-      url: `${baseUrl}/projects/${project.slug || project.id}`,
-      lastModified: currentDate,
-      changeFrequency: 'weekly',
-      priority: 0.75,
-    }));
-  }
-
-  if (dynamicBlogRoutes.length === 0) {
-    dynamicBlogRoutes = (fallbackPosts.posts || []).map((post) => ({
-      url: `${baseUrl}/blog/${post.slug || post.id}`,
-      lastModified: currentDate,
-      changeFrequency: 'weekly',
-      priority: 0.75,
-    }));
-  }
-
-  return [
-    ...staticRoutes,
-    ...countryHubRoutes,
-    ...countryToolRoutes,
-    ...dynamicJobRoutes,
-    ...dynamicProjectRoutes,
-    ...dynamicBlogRoutes,
-  ];
+  return [...routes, ...jobs, ...projects, ...posts];
 }

@@ -104,8 +104,7 @@ export function FreelanceRateCalculator({
       category="finance"
       badge="Pricing Strategy"
       description="Determine your exact freelance hourly rate, day rate, and project pricing based on target take-home income, billable hours, business software overhead, and tax buffers."
-      resultSummaryText={summaryText}
-      faqs={tool?.seo?.faqSchema || []}
+      resultSummaryText={summaryText}
     >
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left Inputs */}

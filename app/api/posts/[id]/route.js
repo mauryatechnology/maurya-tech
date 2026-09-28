@@ -4,6 +4,8 @@ import Post from '@/lib/models/Post';
 import ContentVersion from '@/lib/models/ContentVersion';
 import { verifyToken, hasPermission, ROLES } from '@/lib/auth';
 import { logAuditEvent } from '@/lib/audit';
+import { pingIndexNow } from '@/lib/seo/indexNow';
+import { runQualityGate } from '@/lib/content/qualityGate';
 import { posts as fallbackPosts } from '@/data/posts';
 
 export async function GET(req, { params }) {
@@ -86,7 +88,9 @@ export async function PUT(req, { params }) {
     const allowedFields = [
       'title', 'slug', 'content', 'excerpt', 'category', 'tags',
       'coverImage', 'metaTitle', 'metaDescription', 'isPublished',
-      'status', 'market', 'readingTime', 'author', 'qualityScore'
+      'status', 'market', 'readingTime', 'author', 'qualityScore',
+      'primaryKeyword', 'faqSchema', 'sources', 'canonicalCountry', 'targetCountries',
+      'relatedToolSlug', 'clusterType', 'authorSlug', 'reviewerSlug'
     ];
 
     const safeUpdates = {};
@@ -97,6 +101,28 @@ export async function PUT(req, { params }) {
     }
     safeUpdates.version = currentVersion + 1;
     safeUpdates.updatedAt = new Date();
+
+    // 3b. Quality Gate: a post cannot go live unless it passes (plan §6.4).
+    //     A superadmin may override explicitly; the override is written to the audit log.
+    let quality = null;
+    const goingLive = safeUpdates.isPublished === true || safeUpdates.status === 'published';
+    if (goingLive) {
+      const candidate = { ...existingPost.toObject(), ...safeUpdates, lastReviewedAt: new Date() };
+      const others = await Post.find({ _id: { $ne: existingPost._id }, isPublished: true })
+        .select('title primaryKeyword')
+        .lean();
+      quality = runQualityGate(candidate, {
+        otherKeywords: others.map((o) => o.primaryKeyword),
+        otherTitles: others.map((o) => o.title),
+      });
+      safeUpdates.qualityScore = quality.score;
+
+      const override = body.overrideQualityGate === true && hasPermission(authUser.role, ROLES.SUPERADMIN);
+      if (!quality.passed && !override) {
+        safeUpdates.isPublished = false;
+        safeUpdates.status = 'review';
+      }
+    }
 
     const updatedPost = await Post.findByIdAndUpdate(
       existingPost._id,
@@ -111,11 +137,30 @@ export async function PUT(req, { params }) {
       entityId: updatedPost._id,
       entityName: updatedPost.title,
       performedBy: authUser.email || 'Admin',
-      changes: { version: currentVersion + 1, status: updatedPost.status },
+      changes: {
+        version: currentVersion + 1,
+        status: updatedPost.status,
+        ...(quality ? { qualityScore: quality.score, qualityPassed: quality.passed, qualityOverride: body.overrideQualityGate === true } : {}),
+      },
       req,
     });
 
-    return NextResponse.json({ success: true, post: updatedPost });
+    // 5. Ask IndexNow-enabled engines to recrawl the published URLs (non-blocking)
+    if (updatedPost.isPublished) {
+      const cc = (updatedPost.canonicalCountry || '').toLowerCase();
+      const paths = [`/blog/${updatedPost.slug}`];
+      if (['in', 'us', 'uk'].includes(cc)) paths.push(`/${cc}/guides/${updatedPost.slug}`);
+      pingIndexNow(paths);
+    }
+
+    return NextResponse.json({
+      success: true,
+      post: updatedPost,
+      ...(quality ? { qualityGate: quality } : {}),
+      ...(quality && !quality.passed && !updatedPost.isPublished
+        ? { message: `Held for review: Quality Gate score ${quality.score}/100${quality.blockers.length ? ` (blocked by: ${quality.blockers.join(', ')})` : ''}.` }
+        : {}),
+    });
   } catch (error) {
     console.error('API error:', error);
     return NextResponse.json({ success: false, message: 'Internal server error' }, { status: 500 });

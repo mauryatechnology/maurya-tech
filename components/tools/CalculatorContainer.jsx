@@ -2,7 +2,8 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Share2, Copy, Check, ShieldCheck, Zap, ChevronRight, HelpCircle } from 'lucide-react';
+import { Share2, Copy, Check, ShieldCheck, Zap, ChevronRight } from 'lucide-react';
+import { useToolPage } from '@/components/tools/ToolPageContext';
 import { toast } from 'sonner';
 
 export function CalculatorContainer({
@@ -14,9 +15,15 @@ export function CalculatorContainer({
   description,
   children,
   resultSummaryText = '',
-  faqs = [],
 }) {
   const [copied, setCopied] = useState(false);
+  const { breadcrumbs, embedded } = useToolPage();
+  const crumbs = breadcrumbs || [
+    { name: `${countryName} Hub`, href: `/${country}` },
+    { name: 'Tools & Calculators', href: `/${country}/tools` },
+    { name: toolName },
+  ];
+  const TitleTag = embedded ? 'h2' : 'h1';
 
   const handleCopyResult = () => {
     if (!resultSummaryText) {
@@ -62,18 +69,21 @@ export function CalculatorContainer({
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
-      {/* Breadcrumbs */}
-      <nav className="flex items-center gap-1.5 text-xs text-slate-500 font-medium">
-        <Link href={`/${country}`} className="hover:text-slate-900 transition">
-          {countryName} Hub
-        </Link>
-        <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
-        <Link href={`/${country}/tools`} className="hover:text-slate-900 transition">
-          Tools & Calculators
-        </Link>
-        <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
-        <span className="text-slate-900 font-semibold">{toolName}</span>
-      </nav>
+      {/* Breadcrumbs (BreadcrumbList schema is emitted server-side by the page) */}
+      {!embedded && (
+        <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-1.5 text-xs text-slate-500 font-medium">
+          {crumbs.map((c, i) => (
+            <React.Fragment key={`${c.name}-${i}`}>
+              {i > 0 && <ChevronRight className="w-3.5 h-3.5 text-slate-400" aria-hidden="true" />}
+              {c.href && i < crumbs.length - 1 ? (
+                <Link href={c.href} className="hover:text-slate-900 transition">{c.name}</Link>
+              ) : (
+                <span className="text-slate-900 font-semibold" aria-current="page">{c.name}</span>
+              )}
+            </React.Fragment>
+          ))}
+        </nav>
+      )}
 
       {/* Header Banner */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-6">
@@ -82,9 +92,9 @@ export function CalculatorContainer({
             <Zap className="w-3 h-3 text-cyan-600" />
             <span>{badge}</span>
           </div>
-          <h1 className="text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+          <TitleTag className="text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
             {toolName}
-          </h1>
+          </TitleTag>
           {description && (
             <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
               {description}
@@ -125,27 +135,10 @@ export function CalculatorContainer({
           </span>
         </div>
         <div className="text-[11px] font-mono text-slate-400 shrink-0">
-          Latency: 0ms (Offline Ready)
+          Runs in your browser
         </div>
       </div>
 
-      {/* Frequently Asked Questions (SEO FAQs) */}
-      {faqs && faqs.length > 0 && (
-        <section className="border-t border-slate-200 pt-10 space-y-6">
-          <div className="flex items-center gap-2">
-            <HelpCircle className="w-5 h-5 text-cyan-700" />
-            <h2 className="text-xl font-bold text-slate-900 tracking-tight">Frequently Asked Questions</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {faqs.map((faq, idx) => (
-              <div key={idx} className="p-5 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-2">
-                <h3 className="font-bold text-sm text-slate-900">{faq.question}</h3>
-                <p className="text-xs text-slate-600 leading-relaxed">{faq.answer}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
     </div>
   );
 }

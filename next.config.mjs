@@ -32,6 +32,20 @@ const nextConfig = {
   },
 
   // OWASP Enterprise Security & Caching Headers
+  // GLOBAL tools have one canonical URL (/tools/<slug>); country copies 301 there.
+  // CGPA is India-only, so US/UK copies 301 to the India page.
+  async redirects() {
+    const globalTools = ['percentage-calculator', 'age-calculator', 'unit-converter'];
+    return [
+      ...globalTools.map((slug) => ({
+        source: `/:country(in|us|uk)/tools/${slug}`,
+        destination: `/tools/${slug}`,
+        permanent: true,
+      })),
+      { source: '/:country(us|uk)/tools/cgpa-calculator', destination: '/in/tools/cgpa-calculator', permanent: true },
+    ];
+  },
+
   async headers() {
     return [
       {
@@ -65,12 +79,12 @@ const nextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://va.vercel-scripts.com https://challenges.cloudflare.com https://checkout.razorpay.com",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://va.vercel-scripts.com https://challenges.cloudflare.com https://checkout.razorpay.com https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net https://adservice.google.com https://www.googletagservices.com https://fundingchoicesmessages.google.com https://*.google.com https://*.gstatic.com",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "font-src 'self' https://fonts.gstatic.com data:",
-              "img-src 'self' data: blob: https://images.unsplash.com https://*.public.blob.vercel-storage.com https://maurya-tech.com https://*.razorpay.com",
-              "connect-src 'self' https://va.vercel-scripts.com https://vitals.vercel-insights.com https://*.public.blob.vercel-storage.com https://challenges.cloudflare.com https://api.razorpay.com https://lumberjack.razorpay.com",
-              "frame-src 'self' https://challenges.cloudflare.com https://api.razorpay.com",
+              "img-src 'self' data: blob: https://images.unsplash.com https://*.public.blob.vercel-storage.com https://maurya-tech.com https://*.razorpay.com https://*.googlesyndication.com https://*.doubleclick.net https://*.google.com https://*.gstatic.com https://*.googleusercontent.com",
+              "connect-src 'self' https://va.vercel-scripts.com https://vitals.vercel-insights.com https://*.public.blob.vercel-storage.com https://challenges.cloudflare.com https://api.razorpay.com https://lumberjack.razorpay.com https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net https://adservice.google.com https://www.googletagservices.com https://fundingchoicesmessages.google.com https://*.google.com https://*.gstatic.com https://api.indexnow.org",
+              "frame-src 'self' https://challenges.cloudflare.com https://api.razorpay.com https://*.googlesyndication.com https://*.doubleclick.net https://*.google.com https://fundingchoicesmessages.google.com",
               "frame-ancestors 'none'",
               "base-uri 'self'",
               "form-action 'self'",

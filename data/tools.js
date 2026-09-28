@@ -1,3 +1,7 @@
+/**
+ * Tool registry. `localized[COUNTRY]` overrides name/SEO for that country so each
+ * country URL has its own title, description and target keyword (no duplicates).
+ */
 export const defaultTools = [
   {
     slug: 'ctc-calculator',
@@ -5,42 +9,24 @@ export const defaultTools = [
     category: 'salary',
     countries: ['IN', 'UK'],
     scope: 'LOCALIZED',
-    computeConfig: {
-      IN: {
-        standardDeduction: 75000, // 2026 New Tax Regime standard deduction
-        basicSalaryPercentage: 50,
-        hraPercentage: 20,
-        epfRate: 12,
-        maxEpfWageCeiling: 15000, // optional ₹1800/mo cap
-        professionalTaxAnnual: 2400,
-        rebate87aLimit: 700000, // Zero tax if taxable income <= 7 Lakhs
-        taxSlabsNewRegime: [
-          { min: 0, max: 300000, rate: 0 },
-          { min: 300000, max: 700000, rate: 0.05 },
-          { min: 700000, max: 1000000, rate: 0.1 },
-          { min: 1000000, max: 1200000, rate: 0.15 },
-          { min: 1200000, max: 1500000, rate: 0.2 },
-          { min: 1500000, max: Infinity, rate: 0.3 },
-        ],
-        cessRate: 0.04,
-      },
+    computeConfig: { engine: 'lib/tax', rules: ['IN', 'UK'] }, // rates: lib/tax/index.js
+    localized: {
       UK: {
-        personalAllowance: 12570,
-        basicRateLimit: 50270,
-        basicRate: 0.2,
-        higherRate: 0.4,
-        additionalRateLimit: 125140,
-        additionalRate: 0.45,
-        nationalInsuranceRate: 0.08, // 8% between £12,570 and £50,270
+        name: 'UK Salary Calculator: Take-Home Pay After Tax',
+        seo: {
+          title: 'UK Salary Calculator 2026/27: Take-Home Pay After Tax',
+          description: 'Work out your UK take-home pay after Income Tax and National Insurance for 2026/27, including the £100k Personal Allowance taper. Monthly and weekly figures.',
+          primaryKeyword: 'uk salary calculator take home pay',
+        },
       },
     },
     seo: {
-      title: 'CTC to In-Hand Salary Calculator 2026 | Maurya Technologies',
-      description: 'Calculate your exact monthly in-hand take-home pay from annual CTC under the 2026 New Tax Regime with EPF, HRA, and standard deduction.',
+      title: 'CTC to In-Hand Salary Calculator FY 2025-26 (New Regime)',
+      description: 'Convert CTC to monthly in-hand salary under the new tax regime: ₹75,000 standard deduction, ₹12 lakh 87A rebate, marginal relief, PF and professional tax.',
       primaryKeyword: 'ctc to in hand salary calculator',
       faqSchema: [
         {
-          question: 'What is the standard deduction in the 2026 New Tax Regime in India?',
+          question: 'What is the standard deduction under the new tax regime (FY 2025-26)?',
           answer: 'The standard deduction for salaried employees under the New Tax Regime is ₹75,000 per financial year.',
         },
         {
@@ -58,33 +44,20 @@ export const defaultTools = [
     category: 'salary',
     countries: ['US', 'UK'],
     scope: 'LOCALIZED',
-    computeConfig: {
-      US: {
-        standardHoursPerYear: 2080, // 40 hours/week * 52 weeks
-        standardDeductionSingle: 14600,
-        ficaRateW2: 0.0765, // 6.2% Social Security + 1.45% Medicare
-        ficaRate1099: 0.153, // Self-employment tax
-        federalBracketsSingle: [
-          { min: 0, max: 11600, rate: 0.1 },
-          { min: 11600, max: 47150, rate: 0.12 },
-          { min: 47150, max: 100525, rate: 0.22 },
-          { min: 100525, max: 191950, rate: 0.24 },
-          { min: 191950, max: 243725, rate: 0.32 },
-          { min: 243725, max: 609350, rate: 0.35 },
-          { min: 609350, max: Infinity, rate: 0.37 },
-        ],
-        defaultStateTaxRate: 0.045, // Average state tax estimate
-      },
+    computeConfig: { engine: 'lib/tax', rules: ['US', 'UK'] }, // rates: lib/tax/index.js
+    localized: {
       UK: {
-        standardHoursPerYear: 1950, // 37.5 hours/week * 52 weeks
-        personalAllowance: 12570,
-        basicRate: 0.2,
-        higherRate: 0.4,
+        name: 'Hourly Wage to Annual Salary Calculator (UK)',
+        seo: {
+          title: 'Hourly to Annual Salary Calculator UK (After Tax)',
+          description: 'Convert a UK hourly wage to annual, monthly and weekly pay, with Income Tax and National Insurance deducted using 2026/27 HMRC rates.',
+          primaryKeyword: 'hourly to annual salary calculator uk',
+        },
       },
     },
     seo: {
-      title: 'Hourly to Annual Salary Calculator with Taxes (2026) | Maurya Technologies',
-      description: 'Convert your hourly wage to weekly, monthly, and annual gross pay. Estimate federal tax, FICA, and take-home pay for W-2 and 1099 contractors.',
+      title: 'Hourly to Annual Salary Calculator 2026 (After Tax)',
+      description: 'Convert hourly pay to yearly, monthly and bi-weekly income and see take-home pay after federal tax and FICA or self-employment tax (W-2 and 1099).',
       primaryKeyword: 'hourly to annual salary calculator',
       faqSchema: [
         {
@@ -114,8 +87,8 @@ export const defaultTools = [
       },
     },
     seo: {
-      title: 'Home & Loan EMI Calculator India | Maurya Technologies',
-      description: 'Calculate monthly loan EMI for home, personal, and auto loans. View total interest payable and loan amortization visual breakdown.',
+      title: 'EMI Calculator for Home, Car & Personal Loans (India)',
+      description: 'Calculate loan EMI, total interest and the full amortization split instantly. Compare tenures and interest rates before you borrow — free, no signup.',
       primaryKeyword: 'emi calculator india',
       faqSchema: [
         {
@@ -137,8 +110,8 @@ export const defaultTools = [
       defaultMode: 'percentage_of',
     },
     seo: {
-      title: 'Free Online Percentage & Discount Calculator | Maurya Technologies',
-      description: 'Quickly calculate percentage of a number, percentage increase/decrease, markups, discounts, and exam score percentages instantly.',
+      title: 'Percentage Calculator: % Of, Increase, Decrease & Discount',
+      description: 'Find X% of a number, percentage change, exam percentage, discounts and tax-inclusive prices instantly — with formulas and worked examples.',
       primaryKeyword: 'percentage calculator',
       faqSchema: [
         {
@@ -160,8 +133,8 @@ export const defaultTools = [
       calculateTimeUnits: true,
     },
     seo: {
-      title: 'Exact Age Calculator: Years, Months, Days & Birthday Countdown',
-      description: 'Calculate your exact age today in years, months, days, hours, and minutes. See how many days remain until your next birthday.',
+      title: 'Age Calculator: Exact Age in Years, Months & Days',
+      description: 'Calculate your exact age in years, months and days, your age on any date, and days until your next birthday. Leap years handled correctly.',
       primaryKeyword: 'age calculator online',
       faqSchema: [
         {
@@ -176,13 +149,30 @@ export const defaultTools = [
   {
     slug: 'ats-resume-checker',
     name: 'Free ATS Resume Checker & Parser 2026',
-    category: 'salary',
+    category: 'career',
     countries: ['IN', 'US', 'UK'],
-    scope: 'GLOBAL',
+    scope: 'LOCALIZED',
     computeConfig: {},
+    localized: {
+      UK: {
+        name: 'Free ATS CV Checker',
+        seo: {
+          title: 'Free ATS CV Checker: Score Your CV Instantly (UK)',
+          description: 'Check how well your CV passes applicant tracking systems: keywords, action verbs, measurable impact and structure. Runs privately in your browser.',
+          primaryKeyword: 'ats cv checker free',
+        },
+      },
+      IN: {
+        seo: {
+          title: 'Free ATS Resume Checker for Freshers & IT Jobs (India)',
+          description: 'Check your resume against applicant tracking systems used by Indian IT companies and MNCs: keywords, action verbs, impact and structure. Private, in-browser.',
+          primaryKeyword: 'ats resume checker india',
+        },
+      },
+    },
     seo: {
-      title: 'Free ATS Resume Checker & Parser 2026 | Maurya Technologies',
-      description: 'Check your resume ATS compatibility score instantly. Real-time scoring for action verbs, tech keywords, and measurable impact metrics. 100% private in-browser scanner.',
+      title: 'Free ATS Resume Checker: Score Your Resume Instantly',
+      description: 'Check how well your resume passes applicant tracking systems: keywords, action verbs, measurable impact and structure. Runs privately in your browser.',
       primaryKeyword: 'ats resume checker free',
       faqSchema: [
         {
@@ -202,14 +192,14 @@ export const defaultTools = [
     slug: 'cgpa-calculator',
     name: 'CGPA to Percentage & US 4.0 GPA Calculator',
     category: 'general',
-    countries: ['IN', 'US', 'UK'],
-    scope: 'GLOBAL',
+    countries: ['IN'],
+    scope: 'COUNTRY_EXCLUSIVE',
     computeConfig: {
       defaultMultiplier: 9.5,
     },
     seo: {
-      title: 'CGPA to Percentage & US 4.0 GPA Calculator (2026) | Maurya Technologies',
-      description: 'Convert 10-point CGPA to percentage using CBSE and university multipliers. Convert Indian CGPA to US 4.0 GPA scale and calculate semester SGPA.',
+      title: 'CGPA to Percentage Calculator (CBSE ×9.5 & SGPA)',
+      description: 'Convert CGPA to percentage with the CBSE 9.5 formula, calculate CGPA from semester SGPAs, and estimate a US 4.0 GPA.',
       primaryKeyword: 'cgpa to percentage calculator',
       faqSchema: [
         {
@@ -228,13 +218,30 @@ export const defaultTools = [
   {
     slug: 'resume-builder',
     name: 'Free ATS Resume & CV Builder 2026',
-    category: 'salary',
+    category: 'career',
     countries: ['IN', 'US', 'UK'],
-    scope: 'GLOBAL',
+    scope: 'LOCALIZED',
     computeConfig: {},
+    localized: {
+      UK: {
+        name: 'Free CV Builder (UK)',
+        seo: {
+          title: 'Free CV Builder UK: ATS-Friendly, No Signup, PDF',
+          description: 'Build a UK-style, ATS-friendly CV with live preview and export a clean PDF from your browser. No signup, no watermark, nothing uploaded.',
+          primaryKeyword: 'free cv builder uk',
+        },
+      },
+      IN: {
+        seo: {
+          title: 'Free Resume Builder for Freshers: ATS-Friendly PDF',
+          description: 'Create an ATS-friendly resume for campus placements and IT jobs in India. Live preview, clean PDF export, no signup and no watermark.',
+          primaryKeyword: 'free resume builder for freshers',
+        },
+      },
+    },
     seo: {
-      title: 'Free ATS Resume & CV Builder (2026) | Maurya Technologies',
-      description: 'Create an ATS-compliant resume with live preview and instant browser PDF export. Tailored for software engineers, designers, and tech professionals.',
+      title: 'Free Resume Builder: ATS-Friendly, No Signup, PDF',
+      description: 'Build an ATS-friendly resume or CV with live preview and export a clean PDF from your browser. No signup, no watermark, nothing uploaded.',
       primaryKeyword: 'free ats resume builder online',
       faqSchema: [
         {
@@ -258,8 +265,8 @@ export const defaultTools = [
     scope: 'GLOBAL',
     computeConfig: {},
     seo: {
-      title: 'Universal Unit & Measurement Converter | Maurya Technologies',
-      description: 'Fast online unit converter for length, mass, digital storage (KB, MB, GB, TB), temperature, and speed. Accurate instant results.',
+      title: 'Unit Converter: Length, Weight, Temperature & Data',
+      description: 'Convert length, weight, temperature, speed and data storage (KB, MB, GB, TB, GiB) instantly, with exact conversion factors.',
       primaryKeyword: 'unit converter online free',
       faqSchema: [
         {
@@ -280,11 +287,27 @@ export const defaultTools = [
     name: 'Freelance & Consultant Rate Calculator',
     category: 'finance',
     countries: ['IN', 'US', 'UK'],
-    scope: 'GLOBAL',
+    scope: 'LOCALIZED',
     computeConfig: {},
+    localized: {
+      IN: {
+        seo: {
+          title: 'Freelance Rate Calculator India: Hourly & Project Pricing',
+          description: 'Work out your freelance hourly rate in rupees from target income, expenses, taxes and realistic billable hours — plus day and project rates.',
+          primaryKeyword: 'freelance hourly rate calculator india',
+        },
+      },
+      UK: {
+        seo: {
+          title: 'Freelance Day Rate Calculator UK: Price Your Work',
+          description: 'Work out a UK freelance or contractor day rate and hourly rate from target income, expenses, tax and realistic billable days.',
+          primaryKeyword: 'freelance day rate calculator uk',
+        },
+      },
+    },
     seo: {
-      title: 'Freelance & Consultant Rate Calculator 2026 | Maurya Technologies',
-      description: 'Calculate your hourly rate, day rate, and project pricing. Factored for billable hours, business software overhead, and tax buffers.',
+      title: 'Freelance Hourly Rate Calculator: Price Your Work',
+      description: 'Work out your freelance hourly rate, day rate and project price from target income, expenses, taxes and realistic billable hours.',
       primaryKeyword: 'freelance rate calculator',
       faqSchema: [
         {
@@ -301,3 +324,18 @@ export const defaultTools = [
     enabled: true,
   },
 ];
+
+
+/** Applies a tool's per-country name/SEO overrides. */
+export function localizeTool(tool, countryCode) {
+  if (!tool) return tool;
+  const code = (countryCode || '').toUpperCase();
+  const base = defaultTools.find((t) => t.slug === tool.slug);
+  const loc = tool.localized?.[code] || base?.localized?.[code];
+  if (!loc) return tool;
+  return {
+    ...tool,
+    name: loc.name || tool.name,
+    seo: { ...(tool.seo || {}), ...(loc.seo || {}) },
+  };
+}

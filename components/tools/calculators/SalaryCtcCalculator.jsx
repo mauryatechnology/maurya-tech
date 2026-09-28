@@ -1,130 +1,60 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import Link from 'next/link';
 import { NumericInput } from '@/components/tools/NumericInput';
 import { CalculatorContainer } from '@/components/tools/CalculatorContainer';
-import { Wallet, TrendingDown, ArrowDownRight, ShieldCheck, Sparkles, Building2, HelpCircle } from 'lucide-react';
+import { Wallet, Sparkles, Building2 } from 'lucide-react';
+import { calcIndiaSalary, calcUkTakeHome, TAX_RULES } from '@/lib/tax';
+import { ResumePackCta } from '@/components/tools/ResumePackCta';
 
 export function SalaryCtcCalculator({
   country = 'in',
   countryName = 'India',
   computeConfig = {},
   tool,
+  initialCtc,
 }) {
   const isIndia = country.toLowerCase() === 'in';
   const currencySymbol = isIndia ? '₹' : '£';
 
   // Input states
-  const [ctc, setCtc] = useState(isIndia ? 1000000 : 45000); // 10 Lakh default for IN, 45k for UK
+  const [ctc, setCtc] = useState(initialCtc ?? (isIndia ? 1000000 : 45000)); // 10 Lakh default for IN, 45k for UK
   const [basicPct, setBasicPct] = useState(50);
   const [capEpf, setCapEpf] = useState(true); // ₹1800/mo statutory cap
   const [bonus, setBonus] = useState(0);
 
-  // Real-time pure client-side math
+  // Real-time pure client-side math via the shared tax engine (lib/tax)
   const calculation = useMemo(() => {
     if (isIndia) {
-      const annualCtc = Math.max(0, Number(ctc) || 0);
-      const basicAnnual = (annualCtc * (basicPct / 100));
-      const monthlyBasic = basicAnnual / 12;
-
-      // EPF Employee Share (12% of basic, optionally capped at ₹1800/mo)
-      let monthlyEpf = 0;
-      if (capEpf) {
-        monthlyEpf = Math.min(monthlyBasic * 0.12, 1800);
-      } else {
-        monthlyEpf = monthlyBasic * 0.12;
-      }
-      const annualEpf = monthlyEpf * 12;
-
-      // Professional Tax (Standard ₹2,400/yr in most states)
-      const annualPt = 2400;
-      const monthlyPt = 200;
-
-      // 2026 New Tax Regime Income Tax Calculation
-      const standardDeduction = 75000;
-      const taxableIncome = Math.max(0, annualCtc - standardDeduction);
-
-      let incomeTax = 0;
-      // Section 87A Rebate: Zero tax if taxable income <= 7,00,000
-      if (taxableIncome <= 700000) {
-        incomeTax = 0;
-      } else {
-        if (taxableIncome > 300000) {
-          incomeTax += (Math.min(taxableIncome, 700000) - 300000) * 0.05;
-        }
-        if (taxableIncome > 700000) {
-          incomeTax += (Math.min(taxableIncome, 1000000) - 700000) * 0.10;
-        }
-        if (taxableIncome > 1000000) {
-          incomeTax += (Math.min(taxableIncome, 1200000) - 1000000) * 0.15;
-        }
-        if (taxableIncome > 1200000) {
-          incomeTax += (Math.min(taxableIncome, 1500000) - 1200000) * 0.20;
-        }
-        if (taxableIncome > 1500000) {
-          incomeTax += (taxableIncome - 1500000) * 0.30;
-        }
-      }
-
-      // 4% Health & Education Cess
-      const cess = incomeTax * 0.04;
-      const totalAnnualTax = incomeTax + cess;
-      const monthlyTax = totalAnnualTax / 12;
-
-      const totalAnnualDeductions = annualEpf + annualPt + totalAnnualTax;
-      const annualInHand = Math.max(0, annualCtc - totalAnnualDeductions - bonus);
-      const monthlyInHand = annualInHand / 12;
-
+      const r = calcIndiaSalary({ ctc, basicPct, pfCapped: capEpf, variablePay: bonus });
       return {
-        monthlyInHand: Math.round(monthlyInHand),
-        annualInHand: Math.round(annualInHand),
-        monthlyTax: Math.round(monthlyTax),
-        annualTax: Math.round(totalAnnualTax),
-        monthlyEpf: Math.round(monthlyEpf),
-        annualEpf: Math.round(annualEpf),
-        monthlyPt,
-        annualPt,
-        standardDeduction,
-        taxableIncome: Math.round(taxableIncome),
-        totalDeductions: Math.round(totalAnnualDeductions),
-      };
-    } else {
-      // UK PAYE Calculation
-      const gross = Math.max(0, Number(ctc) || 0);
-      const personalAllowance = 12570;
-      const taxable = Math.max(0, gross - personalAllowance);
-
-      let tax = 0;
-      if (taxable > 0) {
-        tax += Math.min(taxable, 37700) * 0.20; // 20% basic rate up to £50,270
-        if (taxable > 37700) {
-          tax += (taxable - 37700) * 0.40; // 40% higher rate
-        }
-      }
-
-      // National Insurance (approx 8% on earnings between £12,570 and £50,270)
-      const niThreshold = 12570;
-      let ni = 0;
-      if (gross > niThreshold) {
-        ni = Math.min(gross - niThreshold, 37700) * 0.08;
-      }
-
-      const totalDeductions = tax + ni;
-      const netAnnual = Math.max(0, gross - totalDeductions);
-
-      return {
-        monthlyInHand: Math.round(netAnnual / 12),
-        annualInHand: Math.round(netAnnual),
-        monthlyTax: Math.round(tax / 12),
-        annualTax: Math.round(tax),
-        monthlyEpf: Math.round(ni / 12),
-        annualEpf: Math.round(ni),
-        standardDeduction: personalAllowance,
-        taxableIncome: Math.round(taxable),
-        totalDeductions: Math.round(totalDeductions),
+        monthlyInHand: r.monthlyInHand,
+        annualInHand: r.annualInHand,
+        monthlyTax: Math.round(r.tax.total / 12),
+        annualTax: r.tax.total,
+        monthlyEpf: Math.round(r.employeePf / 12),
+        annualEpf: r.employeePf,
+        monthlyPt: Math.round(r.professionalTax / 12),
+        annualPt: r.professionalTax,
+        employerPf: r.employerPf,
+        grossSalary: r.grossSalary,
+        standardDeduction: r.standardDeduction,
+        taxableIncome: r.taxableIncome,
+        totalDeductions: r.totalDeductions,
       };
     }
+    const r = calcUkTakeHome({ gross: ctc });
+    return {
+      monthlyInHand: r.netMonthly,
+      annualInHand: r.net,
+      monthlyTax: Math.round(r.incomeTax / 12),
+      annualTax: r.incomeTax,
+      monthlyEpf: Math.round(r.nationalInsurance / 12),
+      annualEpf: r.nationalInsurance,
+      standardDeduction: r.personalAllowance,
+      taxableIncome: r.taxableIncome,
+      totalDeductions: r.totalTax,
+    };
   }, [ctc, basicPct, capEpf, bonus, isIndia]);
 
   const formatMoney = (val) => {
@@ -143,14 +73,13 @@ export function SalaryCtcCalculator({
       countryName={countryName}
       toolName={tool?.name || (isIndia ? 'CTC to In-Hand Salary Calculator' : 'Gross to Net Salary Calculator')}
       category="salary"
-      badge={isIndia ? '2026 Budget New Tax Regime' : 'HMRC PAYE Rates'}
+      badge={isIndia ? TAX_RULES.IN.label : `HMRC ${TAX_RULES.UK.label}`}
       description={
         isIndia
-          ? 'Estimate your exact monthly take-home salary based on your annual CTC with PF, professional tax, and the ₹75,000 New Regime standard deduction.'
+          ? 'Estimate your monthly take-home salary from annual CTC: employer and employee PF, professional tax, the ₹75,000 standard deduction and the Section 87A rebate (zero tax up to ₹12 lakh taxable income).'
           : 'Calculate your net take-home salary from your gross annual pay with PAYE tax bands and National Insurance deductions.'
       }
       resultSummaryText={summaryText}
-      faqs={tool?.seo?.faqSchema || []}
     >
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left Inputs Card */}
@@ -234,7 +163,7 @@ export function SalaryCtcCalculator({
                 step={5000}
                 min={0}
                 placeholder="0"
-                hint="Deducted from regular monthly take-home"
+                hint="Paid separately — excluded from the regular monthly figure"
               />
             </div>
           )}
@@ -249,7 +178,7 @@ export function SalaryCtcCalculator({
                 Estimated Take-Home Pay
               </span>
               <span className="text-[11px] font-mono text-slate-300 bg-white/10 px-2.5 py-0.5 rounded-full">
-                {isIndia ? '2026 Slabs' : 'PAYE UK'}
+                {isIndia ? 'New Regime' : 'PAYE UK'}
               </span>
             </div>
 
@@ -273,8 +202,14 @@ export function SalaryCtcCalculator({
               <div className="text-[11px] font-bold text-slate-300 uppercase tracking-wider">
                 Monthly Deductions Breakdown
               </div>
+              {isIndia && calculation.employerPf > 0 && (
+                <div className="flex justify-between py-1 border-b border-white/5 text-slate-200">
+                  <span>Employer PF (part of CTC)</span>
+                  <span className="font-semibold text-rose-300">-{formatMoney(Math.round(calculation.employerPf / 12))}</span>
+                </div>
+              )}
               <div className="flex justify-between py-1 border-b border-white/5 text-slate-200">
-                <span>Income Tax (TDS)</span>
+                <span>Income Tax (TDS incl. cess)</span>
                 <span className="font-semibold text-rose-300">-{formatMoney(calculation.monthlyTax)}</span>
               </div>
               <div className="flex justify-between py-1 border-b border-white/5 text-slate-200">
@@ -301,17 +236,9 @@ export function SalaryCtcCalculator({
               <span>Negotiating a Job Offer or Promotion?</span>
             </div>
             <p className="text-xs text-slate-600 leading-relaxed">
-              Don&apos;t accept the first offer. Get our curated <strong>Salary Negotiation Scripts & ATS Resume Pack</strong> designed by senior engineering hiring managers.
+              Get the <strong>Salary Negotiation Scripts &amp; ATS Resume Pack</strong> — counter-offer email templates, ATS-friendly resume templates and bullet-point formulas.
             </p>
-            <div className="pt-1 flex items-center justify-between">
-              <span className="text-xs font-extrabold text-slate-900">Only ₹199</span>
-              <Link
-                href="/contact?ref=salary-pack"
-                className="px-4 py-2 rounded-xl bg-[#0A2540] hover:bg-slate-800 text-white font-semibold text-xs transition cursor-pointer shadow-xs inline-block"
-              >
-                Get Negotiation Pack
-              </Link>
-            </div>
+            <ResumePackCta label="Get Negotiation Pack" country={country} />
           </div>
         </div>
       </div>

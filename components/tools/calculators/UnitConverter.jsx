@@ -154,8 +154,7 @@ export function UnitConverter({
       category="general"
       badge="Universal Utilities"
       description="Convert between length, weight, digital storage (KB/MB/GB), temperature, and speed units with 100% precision."
-      resultSummaryText={summaryText}
-      faqs={tool?.seo?.faqSchema || []}
+      resultSummaryText={summaryText}
     >
       <div className="space-y-6">
         {/* Category Tabs */}

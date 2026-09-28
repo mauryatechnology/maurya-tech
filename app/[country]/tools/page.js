@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getMarketProfile } from '@/lib/market/getMarketProfile';
 import { getToolsForCountry } from '@/lib/market/getTool';
+import { toolPath } from '@/lib/seo/related';
 import {
   Calculator,
   Percent,
@@ -142,7 +143,7 @@ export default async function CountryToolsDirectoryPage({ params }) {
                   return (
                     <Link
                       key={tool.slug}
-                      href={`/${normalized}/tools/${tool.slug}`}
+                      href={toolPath(tool.slug, normalized)}
                       className="group bg-white rounded-2xl border border-slate-200 hover:border-cyan-400 p-6 shadow-xs hover:shadow-lg transition-all duration-300 flex flex-col justify-between"
                     >
                       <div className="space-y-4">

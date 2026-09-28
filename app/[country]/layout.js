@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { getMarketProfile } from '@/lib/market/getMarketProfile';
 import { CountryHeader } from '@/components/layout/CountryHeader';
 import { CountryFooter } from '@/components/layout/CountryFooter';
+import { AdSenseScript } from '@/components/ads/AdSenseScript';
 
 const SUPPORTED_COUNTRIES = ['in', 'us', 'uk'];
 
@@ -19,7 +20,7 @@ export async function generateMetadata({ params }) {
   return {
     title: {
       default: market.seoRules?.defaultMetaTitle || `Free Calculators & Digital Utility Tools ${market.name} | Maurya Technologies`,
-      template: `%s | Maurya Technologies ${market.name}`,
+      template: '%s | Maurya Tech',
     },
     description: market.seoRules?.defaultMetaDescription || `Free online calculators, salary estimators, and productivity tools customized for ${market.name}. Fast, privacy-focused, zero backend storage.`,
     alternates: {
@@ -56,6 +57,7 @@ export default async function CountryLayout({ children, params }) {
       data-theme="global-authority"
       className="min-h-screen flex flex-col bg-[#F8FAFC] text-[#0F172A] selection:bg-cyan-500 selection:text-white"
     >
+      <AdSenseScript market={market} />
       <CountryHeader currentCountry={normalized} marketName={market.name} />
       <main className="flex-1">{children}</main>
       <CountryFooter currentCountry={normalized} marketName={market.name} />

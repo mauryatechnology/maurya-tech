@@ -84,8 +84,7 @@ export function AgeDateCalculator({
       category="general"
       badge="High Precision Math"
       description="Calculate your exact age in years, months, days, total hours, and minutes. Includes day of birth and countdown to your next birthday."
-      resultSummaryText={summaryText}
-      faqs={tool?.seo?.faqSchema || []}
+      resultSummaryText={summaryText}
     >
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left Inputs */}

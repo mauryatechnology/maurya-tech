@@ -182,7 +182,9 @@ export const AdvertisementManager = () => {
     }
   };
 
-  const activeAds = getActiveAds();
+  // No overlays on content/tool routes: they hurt rankings and conflict with AdSense policy.
+  const isContentRoute = /^\/(in|us|uk|tools)(\/|$)/.test(pathname || '');
+  const activeAds = isContentRoute ? [] : getActiveAds();
   const dialogAds = activeAds.filter((ad) => ad.display?.type === 'dialog');
   const bannerAds = activeAds.filter((ad) => ad.display?.type === 'banner');
   const floatingAds = activeAds.filter((ad) => ad.display?.type === 'floating');

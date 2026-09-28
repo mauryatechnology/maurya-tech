@@ -62,8 +62,7 @@ export function EmiCalculator({
       category="finance"
       badge="Visual Amortization"
       description="Calculate your monthly home, car, or personal loan installment (EMI) with real-time principal vs interest visual breakdown."
-      resultSummaryText={summaryText}
-      faqs={tool?.seo?.faqSchema || []}
+      resultSummaryText={summaryText}
     >
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left Inputs Card */}

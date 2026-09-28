@@ -10,6 +10,7 @@ export const posts = {
     {
       id: "1",
       slug: "saas-growth-strategies-2024",
+      canonicalCountry: "GLOBAL",
       title: "SaaS Growth Strategies That Actually Work in 2026",
       excerpt:
         "Learn the proven strategies that successful SaaS companies use to scale from early validation to $10M+ ARR.",
@@ -59,6 +60,7 @@ Don't wait until you have churn problems to build a customer success function. P
     {
       id: "2",
       slug: "mvp-development-guide",
+      canonicalCountry: "GLOBAL",
       title: "The Complete Guide to MVP Development for High-Growth Startups",
       excerpt:
         "Everything you need to know about building a lean, scalable MVP that validates your market idea and secures investor backing.",
@@ -112,6 +114,7 @@ We build with a **Risk-Free Pilot Model**: we deliver the first working function
     {
       id: "3",
       slug: "scaling-high-throughput-microservices",
+      canonicalCountry: "GLOBAL",
       title: "How We Reduced API Response Latency by 74% in High-Throughput Systems",
       excerpt:
         "An in-depth technical case study on connection pooling, Redis caching, and async non-blocking architectures.",
@@ -169,6 +172,7 @@ const items = await Job.find({ isActive: true }).select('title department locati
     {
       id: "4",
       slug: "react-vs-nextjs",
+      canonicalCountry: "GLOBAL",
       title: "React vs Next.js: Architectural Comparison for 2026",
       excerpt:
         "A practical comparison to help you choose between Client-Side Single Page Apps and Server-Driven Next.js applications.",

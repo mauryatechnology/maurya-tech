@@ -1,19 +1,10 @@
 import React from 'react';
 import { ServicesPage } from '@/components/pages/services/ServicesPage';
 import { services as initialServicesData } from '@/data/services';
-import { globalKeywordsList } from '@/data/seo-keywords';
 import connectToDatabase from '@/lib/mongodb';
 import Service from '@/lib/models/Service';
 
 export const revalidate = 60;
-
-const serviceKeywords = globalKeywordsList.filter(
-  (k) =>
-    k.includes('development') ||
-    k.includes('near me') ||
-    k.includes('software') ||
-    k.includes('service')
-);
 
 export const metadata = {
   title: 'Services & Capabilities',
@@ -22,14 +13,6 @@ export const metadata = {
   alternates: {
     canonical: '/services',
   },
-  keywords: [
-    ...serviceKeywords,
-    'Web Development Services',
-    'App Development',
-    'Cloud Consulting',
-    'AI Services',
-    'Software Outsourcing',
-  ],
 };
 
 async function getServicesData() {

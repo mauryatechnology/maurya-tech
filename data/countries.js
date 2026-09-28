@@ -24,7 +24,7 @@ export const defaultCountries = [
       defaultMetaDescription: 'Calculate CTC to in-hand salary, EMI, age, percentage, and check ATS resumes with India-specific tax rules and regulations.',
     },
     monetizationRules: {
-      adNetwork: 'none',
+      adNetwork: 'adsense',
       affiliateNetworks: ['earnkaro', 'amazon_in', 'cuelinks'],
     },
     launchTier: 1,
@@ -54,7 +54,7 @@ export const defaultCountries = [
       defaultMetaDescription: 'Calculate hourly to annual salary, 1099 vs W2 take-home pay, age, and test ATS resume compatibility for the US market.',
     },
     monetizationRules: {
-      adNetwork: 'none',
+      adNetwork: 'adsense',
       affiliateNetworks: ['amazon_us', 'semrush', 'canva'],
     },
     launchTier: 1,
@@ -84,7 +84,7 @@ export const defaultCountries = [
       defaultMetaDescription: 'Calculate UK PAYE gross to net pay, National Insurance, age, and check CV ATS score with official HMRC bands.',
     },
     monetizationRules: {
-      adNetwork: 'none',
+      adNetwork: 'adsense',
       affiliateNetworks: ['amazon_uk'],
     },
     launchTier: 1,

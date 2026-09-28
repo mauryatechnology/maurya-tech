@@ -102,21 +102,11 @@ export function AtsResumeChecker({
       <CalculatorContainer
         country={country}
         countryName={countryName}
-        toolName="Free ATS Resume Checker & Parser 2026"
+        toolName={tool?.name || "Free ATS Resume Checker"}
         category="career"
         badge="Instant 0ms Parser"
         description="Scan your resume text against modern Applicant Tracking System (ATS) algorithms. Real-time scoring for keyword density, measurable impact metrics, and action verbs."
         resultSummaryText={summaryText}
-        faqs={[
-          {
-            question: 'What is an ATS and why does my score matter?',
-            answer: 'Applicant Tracking Systems (ATS) like Workday, Greenhouse, and Lever automatically filter out 75%+ of resumes before a human recruiter ever sees them. An ATS score of 80+ ensures your application bypasses automated keyword filters.',
-          },
-          {
-            question: 'Is my resume text stored on your servers?',
-            answer: 'No. This scanner operates 100% inside your browser using client-side JavaScript. Zero text or personal information is transmitted to or stored on any server.',
-          },
-        ]}
       >
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Left Column: Input Box */}

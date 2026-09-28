@@ -206,7 +206,6 @@ export function ResumeBuilder({
       badge="Career Engine"
       description="Design a clean, ATS-compliant software engineering and professional resume in minutes. Live split-screen preview with instant browser PDF export."
       resultSummaryText={summaryText}
-      faqs={tool?.seo?.faqSchema || []}
     >
       <div className="space-y-6">
         {/* Top Control Bar */}
@@ -635,9 +634,9 @@ export function ResumeBuilder({
             >
               {/* Header */}
               <div className="border-b-2 border-slate-900 pb-4">
-                <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 uppercase">
+                <p className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 uppercase">
                   {profile.fullName || 'YOUR NAME'}
-                </h1>
+                </p>
                 <p className="text-sm font-semibold text-cyan-700 tracking-wide mt-0.5">
                   {profile.title || 'Professional Title'}
                 </p>

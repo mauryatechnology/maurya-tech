@@ -65,8 +65,7 @@ export function PercentageCalculator({
       category="general"
       badge="Multi-Formula Utility"
       description="Calculate percentages of any number, percentage change, exam scores, and discounts with sales tax in real time."
-      resultSummaryText={`Calculated percentage result: ${results.res1}`}
-      faqs={tool?.seo?.faqSchema || []}
+      resultSummaryText={`Calculated percentage result: ${results.res1}`}
     >
       <div className="space-y-6">
         {/* Formula Switcher Tabs */}

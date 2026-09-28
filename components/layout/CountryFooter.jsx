@@ -47,12 +47,12 @@ export function CountryFooter({ currentCountry = 'in', marketName = 'India' }) {
                     </Link>
                   </li>
                   <li>
-                    <Link href="/in/tools/percentage-calculator" className="hover:text-cyan-400 transition">
+                    <Link href="/tools/percentage-calculator" className="hover:text-cyan-400 transition">
                       Percentage & Discount Calculator
                     </Link>
                   </li>
                   <li>
-                    <Link href="/in/tools/age-calculator" className="hover:text-cyan-400 transition">
+                    <Link href="/tools/age-calculator" className="hover:text-cyan-400 transition">
                       Exact Age & Birthday Calculator
                     </Link>
                   </li>
@@ -65,12 +65,12 @@ export function CountryFooter({ currentCountry = 'in', marketName = 'India' }) {
                     </Link>
                   </li>
                   <li>
-                    <Link href={`/${currentCountry}/tools/percentage-calculator`} className="hover:text-cyan-400 transition">
+                    <Link href="/tools/percentage-calculator" className="hover:text-cyan-400 transition">
                       Percentage Calculator
                     </Link>
                   </li>
                   <li>
-                    <Link href={`/${currentCountry}/tools/age-calculator`} className="hover:text-cyan-400 transition">
+                    <Link href="/tools/age-calculator" className="hover:text-cyan-400 transition">
                       Age & Date Difference Calculator
                     </Link>
                   </li>
@@ -135,6 +135,16 @@ export function CountryFooter({ currentCountry = 'in', marketName = 'India' }) {
               <li>
                 <Link href="/contact" className="hover:text-white transition">
                   Contact & Support
+                </Link>
+              </li>
+              <li>
+                <Link href={`/${currentCountry}/salary`} className="hover:text-white transition">
+                  Salary breakdowns
+                </Link>
+              </li>
+              <li>
+                <Link href="/methodology" className="hover:text-white transition">
+                  How we calculate
                 </Link>
               </li>
               <li>

@@ -1,7 +1,6 @@
 import { Inter, Montserrat, Open_Sans, Fira_Code } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
-import { globalKeywordsList, seoData } from "@/data/seo-keywords";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { serializeJsonLd } from "@/lib/utils";
@@ -48,7 +47,6 @@ export const metadata = {
     template: "%s | Maurya Technologies"
   },
   description: "Maurya Technologies: Leading Software Engineering & IT Company in Bhopal, India. We build scalable SaaS, Web Applications, Mobile Apps, Cloud Infrastructure, and AI Solutions with a risk-free Pilot Model.",
-  keywords: globalKeywordsList,
   authors: [{ name: "Kuldeep Maurya" }, { name: "Maurya Technologies Team" }],
   creator: "Maurya Technologies",
   publisher: "Maurya Technologies",
@@ -62,22 +60,18 @@ export const metadata = {
     description: "Expert Software Development Services. We build scalable, high-performance web and mobile applications using modern technologies.",
     url: 'https://maurya-tech.com',
     siteName: 'Maurya Technologies',
-    images: [
-      {
-        url: '/og-image.png',
-        width: 1200,
-        height: 630,
-        alt: 'Maurya Technologies & Services',
-      },
-    ],
     locale: 'en_US',
     type: 'website',
+  },
+  // Search engine ownership verification (values come from GSC / Bing Webmaster Tools).
+  verification: {
+    ...(process.env.GOOGLE_SITE_VERIFICATION ? { google: process.env.GOOGLE_SITE_VERIFICATION } : {}),
+    ...(process.env.BING_SITE_VERIFICATION ? { other: { 'msvalidate.01': process.env.BING_SITE_VERIFICATION } } : {}),
   },
   twitter: {
     card: 'summary_large_image',
     title: "Maurya Technologies",
     description: "Innovative software solutions. From Idea to Production. Start your risk-free pilot today.",
-    images: ['/og-image.png'],
     creator: '@mauryatech',
   },
   robots: {
@@ -112,7 +106,7 @@ export default function RootLayout({ children }) {
     "@context": "https://schema.org",
     "@type": "Organization",
     "name": "Maurya Technologies",
-    "alternateName": seoData.typos,
+    "alternateName": "Maurya Tech",
     "url": "https://maurya-tech.com",
     "logo": "https://maurya-tech.com/logo.png",
     "address": {
@@ -127,6 +121,14 @@ export default function RootLayout({ children }) {
     ]
   };
 
+  const websiteJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Maurya Technologies",
+    "url": "https://maurya-tech.com",
+    "publisher": { "@type": "Organization", "name": "Maurya Technologies" },
+  };
+
   return (
     <html lang="en" data-theme="engineer-dark" className="dark" suppressHydrationWarning>
       <head>
@@ -138,6 +140,10 @@ export default function RootLayout({ children }) {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: serializeJsonLd(websiteJsonLd) }}
         />
       </head>
       <body className={`${inter.variable} ${montserrat.variable} ${openSans.variable} ${firaCode.variable} antialiased bg-[#0a0f1d] text-[#f8fafc]`} suppressHydrationWarning>

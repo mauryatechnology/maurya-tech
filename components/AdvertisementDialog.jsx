@@ -19,10 +19,21 @@ const AdvertisementDialog = () => {
   const router = useRouter();
 
   useEffect(() => {
-    // 1. Open dialog after exactly 10 seconds
+    // Never interrupt mobile visitors, and show at most once per session.
+    if (typeof window === 'undefined') return undefined;
+    if (window.matchMedia('(max-width: 1023px)').matches) return undefined;
+    try {
+      if (sessionStorage.getItem('promo-dialog-shown')) return undefined;
+    } catch {
+      // storage unavailable — fall through and show once
+    }
+
     const openTimer = setTimeout(() => {
       setOpen(true);
       setTimeLeft(5);
+      try {
+        sessionStorage.setItem('promo-dialog-shown', '1');
+      } catch {}
     }, 10000);
 
     return () => clearTimeout(openTimer);

@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getMarketProfile } from '@/lib/market/getMarketProfile';
+import { toolPath } from '@/lib/seo/related';
 import {
   Calculator,
   Percent,
@@ -29,7 +30,7 @@ export async function generateMetadata({ params }) {
   const market = await getMarketProfile(normalized);
 
   return {
-    title: `Free Online Calculators & Financial Tools for ${market.name} (2026)`,
+    title: `Free Salary, Tax & Everyday Calculators for ${market.name}`,
     description: `Access instant, accurate calculators for ${market.name}. CTC to in-hand salary, EMI, percentage, age, and ATS resume checkers. 100% client-side privacy.`,
   };
 }
@@ -53,10 +54,10 @@ export default async function CountryHomePage({ params }) {
           : 'Gross to Net PAYE Salary Calculator',
       description:
         normalized === 'in'
-          ? 'Calculate monthly take-home salary from your annual CTC under the 2026 New Tax Regime with PF and standard deduction.'
+          ? 'Monthly take-home salary from annual CTC under the FY 2025-26 new regime — PF, ₹75,000 standard deduction and the ₹12 lakh rebate.'
           : normalized === 'us'
           ? 'Convert your hourly pay to 40h/week annual income and estimate federal, state, and FICA deductions.'
-          : 'Calculate take-home pay under HMRC PAYE tax bands, National Insurance, and pension contributions.',
+          : 'Take-home pay after 2026/27 Income Tax and National Insurance, with the Personal Allowance taper handled.',
       badge: 'Most Popular',
       badgeColor: 'bg-emerald-100 text-emerald-800 border-emerald-200',
       icon: Calculator,
@@ -86,15 +87,25 @@ export default async function CountryHomePage({ params }) {
       icon: normalized === 'in' ? CreditCard : Briefcase,
       color: 'from-indigo-500 to-purple-600',
     },
-    {
-      slug: 'cgpa-calculator',
-      title: 'CGPA to Percentage & US 4.0 GPA',
-      description: 'Convert university CGPA to percentage using CBSE 9.5 multiplier, or convert to US 4.0 scale.',
-      badge: 'Academic',
-      badgeColor: 'bg-cyan-100 text-cyan-800 border-cyan-200',
-      icon: GraduationCap,
-      color: 'from-cyan-500 to-blue-600',
-    },
+    normalized === 'in'
+      ? {
+          slug: 'cgpa-calculator',
+          title: 'CGPA to Percentage Calculator',
+          description: 'Convert CGPA to percentage with the CBSE ×9.5 formula, or work out CGPA from semester SGPAs.',
+          badge: 'Academic',
+          badgeColor: 'bg-cyan-100 text-cyan-800 border-cyan-200',
+          icon: GraduationCap,
+          color: 'from-cyan-500 to-blue-600',
+        }
+      : {
+          slug: 'ats-resume-checker',
+          title: normalized === 'uk' ? 'Free ATS CV Checker' : 'Free ATS Resume Checker',
+          description: 'Score your document for keywords, action verbs and measurable impact before you apply.',
+          badge: 'Career Tool',
+          badgeColor: 'bg-cyan-100 text-cyan-800 border-cyan-200',
+          icon: FileCheck2,
+          color: 'from-cyan-500 to-blue-600',
+        },
     {
       slug: 'percentage-calculator',
       title: 'Percentage & Discount Calculator',
@@ -139,15 +150,35 @@ export default async function CountryHomePage({ params }) {
         {/* Feature Pills */}
         <div className="flex flex-wrap items-center justify-center gap-4 text-xs font-medium text-slate-600 pt-2">
           <div className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white border border-slate-200 shadow-2xs">
-            <Zap className="w-3.5 h-3.5 text-amber-500" /> Instant 0ms Calculations
+            <Zap className="w-3.5 h-3.5 text-amber-500" /> Instant results
           </div>
           <div className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white border border-slate-200 shadow-2xs">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" /> Client-Side Privacy
           </div>
           <div className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white border border-slate-200 shadow-2xs">
-            <Sparkles className="w-3.5 h-3.5 text-cyan-500" /> 2026 {market.currency} Standards
+            <Sparkles className="w-3.5 h-3.5 text-cyan-500" /> Current {market.currency} tax rules
           </div>
         </div>
+      </section>
+
+      {/* Salary breakdown hub */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <Link
+          href={`/${normalized}/salary`}
+          className="group flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-3xl border border-slate-200 bg-white p-6 hover:border-cyan-400 transition"
+        >
+          <span>
+            <span className="block text-lg font-bold text-slate-900">
+              {normalized === 'in' ? 'In-hand salary for every CTC' : normalized === 'us' ? 'Every hourly wage converted to a yearly salary' : 'Take-home pay for every UK salary'}
+            </span>
+            <span className="block text-sm text-slate-500 mt-1">
+              Ready-made breakdowns with tax, deductions and monthly pay — updated for the current tax year.
+            </span>
+          </span>
+          <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-cyan-700">
+            Browse breakdowns <ArrowRight className="w-4 h-4" aria-hidden="true" />
+          </span>
+        </Link>
       </section>
 
       {/* Featured Tools Grid */}
@@ -173,7 +204,7 @@ export default async function CountryHomePage({ params }) {
             return (
               <Link
                 key={tool.slug}
-                href={`/${normalized}/tools/${tool.slug}`}
+                href={toolPath(tool.slug, normalized)}
                 className="group relative bg-white border border-slate-200/80 rounded-2xl p-6 hover:shadow-lg hover:border-cyan-400/50 transition-all duration-300 flex flex-col justify-between overflow-hidden"
               >
                 <div className="space-y-4">

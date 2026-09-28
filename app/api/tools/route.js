@@ -4,6 +4,8 @@ import Tool from '@/lib/models/Tool';
 import { defaultTools } from '@/data/tools';
 import { verifyToken, hasPermission, ROLES } from '@/lib/auth';
 import { logAuditEvent } from '@/lib/audit';
+import { pingIndexNow } from '@/lib/seo/indexNow';
+import { toolPath } from '@/lib/seo/related';
 
 export async function GET(req) {
   try {
@@ -50,7 +52,7 @@ export async function PUT(req) {
         ...(countries && { countries }),
         ...(scope && { scope }),
         ...(computeConfig && { computeConfig }),
-        ...(seo && { seo }),
+        ...(seo && { seo: { ...seo, customized: true } }),
       },
       { new: true, upsert: true }
     );
@@ -64,6 +66,11 @@ export async function PUT(req) {
       changes: { enabled, status, scope },
       req,
     });
+
+    if (updated.enabled !== false && updated.status !== 'draft') {
+      const countries = updated.scope === 'GLOBAL' ? ['in'] : updated.countries || [];
+      pingIndexNow([...new Set(countries.map((c) => toolPath(updated.slug, c.toLowerCase())))]);
+    }
 
     return NextResponse.json({ success: true, tool: updated });
   } catch (error) {
