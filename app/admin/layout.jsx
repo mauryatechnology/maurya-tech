@@ -24,6 +24,7 @@ import {
   History,
   Search,
   DollarSign,
+  BellRing,
 } from 'lucide-react';
 
 const NAV_ITEMS = [
@@ -41,6 +42,7 @@ const NAV_ITEMS = [
   { name: 'Services CMS', href: '/admin/services', icon: Cpu },
   { name: 'Blog CMS', href: '/admin/blogs', icon: BookOpen },
   { name: 'Inquiries & Leads', href: '/admin/inquiries', icon: Mail },
+  { name: 'Tax-Alert Subscribers', href: '/admin/subscribers', icon: BellRing },
   { name: 'Settings & Seed', href: '/admin/settings', icon: Settings },
 ];
 

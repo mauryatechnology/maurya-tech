@@ -27,7 +27,7 @@ export function GET() {
 
   const body = `# Maurya Tech
 
-> Free salary, tax, loan and everyday calculators for India, the United States and the United Kingdom, with country-specific rules (India new tax regime FY 2025-26, US federal tax year 2026, UK 2026/27 PAYE). All calculations run in the browser.
+> Free salary, tax, loan and everyday calculators for India, the United States and the United Kingdom, with country-specific rules (India new tax regime FY 2026-27, US federal tax year 2026, UK 2026/27 PAYE). All calculations run in the browser.
 
 ## Calculators
 ${tools.join('\n')}

@@ -3,10 +3,10 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getMarketProfile } from '@/lib/market/getMarketProfile';
 import { toolPath } from '@/lib/seo/related';
+import { absoluteUrl } from '@/lib/seo/schema';
 import {
   Calculator,
   Percent,
-  Calendar,
   CreditCard,
   FileCheck2,
   ArrowRight,
@@ -29,9 +29,21 @@ export async function generateMetadata({ params }) {
 
   const market = await getMarketProfile(normalized);
 
+  const title = `Free Salary, Tax & Everyday Calculators for ${market.name}`;
+  const description = `Access instant, accurate calculators for ${market.name}. CTC to in-hand salary, EMI, percentage, age, and ATS resume checkers. 100% client-side privacy.`;
   return {
-    title: `Free Salary, Tax & Everyday Calculators for ${market.name}`,
-    description: `Access instant, accurate calculators for ${market.name}. CTC to in-hand salary, EMI, percentage, age, and ATS resume checkers. 100% client-side privacy.`,
+    title,
+    description,
+    alternates: {
+      canonical: absoluteUrl(`/${normalized}`),
+      languages: {
+        'en-IN': absoluteUrl('/in'),
+        'en-US': absoluteUrl('/us'),
+        'en-GB': absoluteUrl('/uk'),
+        'x-default': absoluteUrl('/in'),
+      },
+    },
+    openGraph: { title, description, url: absoluteUrl(`/${normalized}`), type: 'website', siteName: 'Maurya Technologies' },
   };
 }
 
@@ -54,7 +66,7 @@ export default async function CountryHomePage({ params }) {
           : 'Gross to Net PAYE Salary Calculator',
       description:
         normalized === 'in'
-          ? 'Monthly take-home salary from annual CTC under the FY 2025-26 new regime — PF, ₹75,000 standard deduction and the ₹12 lakh rebate.'
+          ? 'Monthly take-home salary from annual CTC under the FY 2026-27 new regime — PF, ₹75,000 standard deduction and the ₹12 lakh rebate.'
           : normalized === 'us'
           ? 'Convert your hourly pay to 40h/week annual income and estimate federal, state, and FICA deductions.'
           : 'Take-home pay after 2026/27 Income Tax and National Insurance, with the Personal Allowance taper handled.',
@@ -115,15 +127,28 @@ export default async function CountryHomePage({ params }) {
       icon: Percent,
       color: 'from-teal-500 to-emerald-600',
     },
-    {
-      slug: 'age-calculator',
-      title: 'Exact Age & Birthday Countdown',
-      description: 'Calculate your exact age in years, months, days, hours, and minutes with upcoming birthday alerts.',
-      badge: 'Instant Math',
-      badgeColor: 'bg-amber-100 text-amber-800 border-amber-200',
-      icon: Calendar,
-      color: 'from-amber-500 to-orange-600',
-    },
+    normalized === 'in'
+      ? {
+          slug: 'sip-calculator',
+          title: 'SIP Calculator With Step-Up',
+          description: 'See what a monthly mutual fund SIP could grow to, how much is your money and how much is returns.',
+          badge: 'Investing',
+          badgeColor: 'bg-amber-100 text-amber-800 border-amber-200',
+          icon: TrendingUp,
+          color: 'from-amber-500 to-orange-600',
+        }
+      : {
+          slug: 'mortgage-calculator',
+          title: normalized === 'uk' ? 'Mortgage & Stamp Duty Calculator' : 'Mortgage Calculator With PMI',
+          description:
+            normalized === 'uk'
+              ? 'Monthly repayments, loan-to-value and Stamp Duty for England and Northern Ireland.'
+              : 'Monthly payment with property tax, insurance, PMI and HOA, plus total interest.',
+          badge: 'Home Buying',
+          badgeColor: 'bg-amber-100 text-amber-800 border-amber-200',
+          icon: Calculator,
+          color: 'from-amber-500 to-orange-600',
+        },
   ];
 
   return (

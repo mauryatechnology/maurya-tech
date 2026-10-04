@@ -19,8 +19,16 @@ import {
   ShieldCheck,
   Code2,
   Layers,
+  Calculator,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+
+const FREE_TOOL_LINKS = [
+  { name: 'India salary & tax', href: '/in', description: 'CTC to in-hand, new vs old regime, EMI' },
+  { name: 'US paycheck & wages', href: '/us', description: 'Paycheck by state, hourly to salary' },
+  { name: 'UK take-home pay', href: '/uk', description: 'Salary after Income Tax and NI' },
+  { name: 'Resume & career tools', href: '/tools', description: 'ATS resume checker, resume builder' },
+];
 
 // Lazy-load Advertisement Dialog so it doesn't block critical page render
 const AdvertisementDialog = dynamic(() => import('@/components/AdvertisementDialog'), {
@@ -298,6 +306,34 @@ export function HomePage({ homeData: serverHomeData, clientData: serverClientDat
               index={index}
             />
           ))}
+        </div>
+      </Section>
+
+      {/* 5b. FREE TOOLS — passes agency equity to the calculator hubs */}
+      <Section>
+        <SectionHeader
+          title="Free Salary & Tax Calculators"
+          subtitle="Built and maintained by our team — no sign-up, everything runs in your browser."
+        />
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {FREE_TOOL_LINKS.map((t) => (
+            <Link
+              key={t.href}
+              href={t.href}
+              className="group rounded-2xl border border-border bg-card p-5 hover:border-primary/60 transition-colors"
+            >
+              <span className="flex items-center gap-2 font-semibold text-foreground">
+                <Calculator className="w-4 h-4 text-primary" aria-hidden="true" />
+                {t.name}
+              </span>
+              <span className="mt-1 block text-sm text-muted-foreground">{t.description}</span>
+            </Link>
+          ))}
+        </div>
+        <div className="mt-6 text-center">
+          <Link href="/tools" className="inline-flex items-center gap-1 font-semibold text-primary hover:underline">
+            See all free tools <ArrowRight className="w-4 h-4" aria-hidden="true" />
+          </Link>
         </div>
       </Section>
 

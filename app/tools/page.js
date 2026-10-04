@@ -11,6 +11,13 @@ export const metadata = {
   description:
     'Every free calculator on Maurya Tech in one place — salary and tax for India, the US and the UK, loan EMI, resume tools, and everyday percentage, age and unit converters.',
   alternates: { canonical: absoluteUrl('/tools') },
+  openGraph: {
+    title: 'Free Online Calculators: Salary, Tax, Loans & Everyday Maths',
+    description: 'Free salary, tax, loan and everyday calculators for India, the US and the UK.',
+    url: absoluteUrl('/tools'),
+    type: 'website',
+    siteName: 'Maurya Technologies',
+  },
 };
 
 const COUNTRY_LABEL = { IN: 'India', US: 'United States', UK: 'United Kingdom' };

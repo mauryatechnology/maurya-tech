@@ -14,6 +14,14 @@ import {
   compareIndiaRegimes,
 } from '@/lib/tax';
 import { salaryPathIfExists } from '@/lib/programmatic/salary';
+import { MORTGAGE_RULES, monthlyPayment, ukStampDuty } from '@/lib/finance/mortgage';
+import { SAVINGS_RULES, fdMaturity, ppfMaturity, sipFutureValue } from '@/lib/finance/savings';
+import { US_401K, employeeLimit, project401k } from '@/lib/finance/retirement';
+import { UK_STUDENT_LOANS, studentLoanRepayment } from '@/lib/finance/studentLoan';
+import { CONSUMPTION_TAX_RULES, US_STATE_SALES_TAX, applyTax } from '@/lib/finance/salesTax';
+
+const gbp2 = (n) => `£${Number(n || 0).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+const inr2 = (n) => `₹${Number(n || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
 /**
  * Server-rendered reference tables and worked examples. All figures are computed from
@@ -235,6 +243,178 @@ const BLOCKS = {
       />
     );
   },
+
+  'us-mortgage-examples': () => {
+    const prices = [250000, 350000, 450000, 600000];
+    return (
+      <Table
+        caption="Monthly principal & interest on a 30-year fixed loan with 20% down"
+        headers={['Home price', 'Loan', 'At 5.5%', 'At 6.5%', 'At 7.5%']}
+        rows={prices.map((p) => {
+          const loan = p * 0.8;
+          return [formatUSD(p), formatUSD(loan), ...[5.5, 6.5, 7.5].map((r) => formatUSD(monthlyPayment(loan, r, 30)))];
+        })}
+      />
+    );
+  },
+
+  'us-mortgage-term-compare': () => {
+    const loan = 320000;
+    return (
+      <Table
+        caption={`15 vs 20 vs 30 years on a ${formatUSD(loan)} loan at 6.5%`}
+        headers={['Term', 'Monthly P&I', 'Total interest']}
+        rows={[15, 20, 30].map((y) => {
+          const m = monthlyPayment(loan, 6.5, y);
+          return [`${y} years`, formatUSD(m), formatUSD(m * y * 12 - loan)];
+        })}
+      />
+    );
+  },
+
+  'uk-mortgage-examples': () => {
+    const loans = [150000, 200000, 250000, 300000, 400000];
+    return (
+      <Table
+        caption="Monthly repayment on a 25-year repayment mortgage"
+        headers={['Mortgage', 'At 4%', 'At 4.5%', 'At 5%', 'At 5.5%']}
+        rows={loans.map((l) => [formatGBP(l), ...[4, 4.5, 5, 5.5].map((r) => formatGBP(monthlyPayment(l, r, 25)))])}
+      />
+    );
+  },
+
+  'uk-stamp-duty-table': () => (
+    <Table
+      caption="Stamp Duty Land Tax (England & NI, main residence, from 1 April 2025)"
+      headers={['Property price', 'Standard', 'First-time buyer']}
+      rows={[200000, 250000, 300000, 400000, 500000, 600000, 1000000].map((p) => [
+        formatGBP(p),
+        formatGBP(ukStampDuty(p, false)),
+        p > MORTGAGE_RULES.UK.firstTimeBuyerPriceCap ? `${formatGBP(ukStampDuty(p, true))} (no relief)` : formatGBP(ukStampDuty(p, true)),
+      ])}
+    />
+  ),
+
+  'sip-examples': () => (
+    <Table
+      caption="SIP value at 12% a year (monthly compounding, no step-up)"
+      headers={['Monthly SIP', '5 years', '10 years', '15 years', '20 years']}
+      rows={[2000, 5000, 10000, 25000].map((m) => [
+        formatINR(m),
+        ...[5, 10, 15, 20].map((y) => formatINR(sipFutureValue({ monthly: m, ratePct: 12, years: y }).value)),
+      ])}
+    />
+  ),
+
+  'sip-rate-compare': () => (
+    <Table
+      caption="₹10,000 a month for 15 years at different returns"
+      headers={['Return', 'Invested', 'Value', 'Returns']}
+      rows={[8, 10, 12, 14].map((r) => {
+        const s = sipFutureValue({ monthly: 10000, ratePct: r, years: 15 });
+        return [`${r}%`, formatINR(s.invested), formatINR(s.value), formatINR(s.gains)];
+      })}
+    />
+  ),
+
+  'fd-examples': () => (
+    <Table
+      caption="Maturity of ₹1,00,000 with quarterly compounding"
+      headers={['Rate', '1 year', '3 years', '5 years']}
+      rows={[6, 6.5, 7, 7.5].map((r) => [`${r}%`, ...[1, 3, 5].map((y) => formatINR(fdMaturity({ principal: 100000, ratePct: r, years: y }).maturity))])}
+    />
+  ),
+
+  'ppf-examples': () => (
+    <Table
+      caption={`PPF maturity at ${SAVINGS_RULES.ppf.ratePct}% (deposit before 5 April each year)`}
+      headers={['Yearly deposit', '15 years', '20 years', '25 years']}
+      rows={[25000, 50000, 100000, 150000].map((d) => [formatINR(d), ...[15, 20, 25].map((y) => formatINR(ppfMaturity({ yearly: d, years: y }).maturity))])}
+    />
+  ),
+
+  '401k-limits-table': () => (
+    <Table
+      caption={`401(k) employee contribution limits for ${US_401K.year}`}
+      headers={['Your age in the year', 'Elective deferral', 'Catch-up', 'Total you can defer']}
+      rows={[
+        ['Under 50', formatUSD(US_401K.electiveLimit), '—', formatUSD(employeeLimit(40))],
+        ['50–59 or 64+', formatUSD(US_401K.electiveLimit), formatUSD(US_401K.catchUp50), formatUSD(employeeLimit(55))],
+        ['60–63', formatUSD(US_401K.electiveLimit), formatUSD(US_401K.catchUp60to63), formatUSD(employeeLimit(61))],
+      ]}
+    />
+  ),
+
+  '401k-growth-examples': () => (
+    <Table
+      caption="Balance at 65 contributing 10% total (you + employer) of a salary rising 3% a year, 7% return, starting from $0"
+      headers={['Starting salary', 'Start at 25', 'Start at 35', 'Start at 45']}
+      rows={[50000, 75000, 100000].map((s) => [
+        formatUSD(s),
+        ...[25, 35, 45].map((a) => formatUSD(project401k({ age: a, retireAge: 65, salary: s, contribPct: 10, returnPct: 7, raisePct: 3 }).balance)),
+      ])}
+    />
+  ),
+
+  'uk-student-loan-thresholds': () => (
+    <Table
+      caption={`Student loan repayment thresholds ${UK_STUDENT_LOANS.taxYear}`}
+      headers={['Plan', 'Who', 'Yearly threshold', 'Rate', 'Written off after']}
+      rows={Object.values(UK_STUDENT_LOANS.plans).map((p) => [p.label, p.who, formatGBP(p.threshold), formatPct(p.rate, 0), `${p.writeOffYears} years`])}
+    />
+  ),
+
+  'uk-student-loan-examples': () => (
+    <Table
+      caption={`Monthly repayment by salary (${UK_STUDENT_LOANS.taxYear})`}
+      headers={['Salary', 'Plan 1', 'Plan 2', 'Plan 4', 'Plan 5', 'Postgraduate']}
+      rows={[25000, 30000, 35000, 40000, 50000, 60000].map((s) => [
+        formatGBP(s),
+        ...['plan1', 'plan2', 'plan4', 'plan5', 'postgrad'].map((p) => formatGBP(studentLoanRepayment(s, p) / 12)),
+      ])}
+    />
+  ),
+
+  'gst-rate-table': () => (
+    <Table
+      caption="GST slabs after GST 2.0 (from 22 September 2025)"
+      headers={['Rate', 'Typical goods and services', 'GST on ₹10,000']}
+      rows={CONSUMPTION_TAX_RULES.IN.rates.map((x) => [x.label, x.examples, formatINR(applyTax(10000, x.rate).tax)])}
+    />
+  ),
+
+  'gst-examples': () => (
+    <Table
+      caption="Removing GST from an inclusive price"
+      headers={['Price incl. GST', 'At 5%: GST / taxable value', 'At 18%: GST / taxable value', 'At 40%: GST / taxable value']}
+      rows={[1000, 11800, 50000, 100000].map((p) => [
+        formatINR(p),
+        ...[5, 18, 40].map((r) => {
+          const t = applyTax(p, r, 'remove');
+          return `${inr2(t.tax)} / ${inr2(t.net)}`;
+        }),
+      ])}
+    />
+  ),
+
+  'us-sales-tax-table': () => (
+    <Table
+      caption={`State sales tax rates as of ${CONSUMPTION_TAX_RULES.US.asOf} (local rates are added on top)`}
+      headers={['State', 'State rate', 'Tax on $100']}
+      rows={US_STATE_SALES_TAX.map(([, name, rate]) => [name, `${rate}%`, formatUSD(applyTax(100, rate).tax, 2)])}
+    />
+  ),
+
+  'vat-examples': () => (
+    <Table
+      caption="Adding and removing 20% VAT"
+      headers={['Amount', 'Add VAT: gross', 'Remove VAT: net', 'Remove VAT: VAT']}
+      rows={[10, 100, 250, 1000, 5000].map((a) => {
+        const rem = applyTax(a, 20, 'remove');
+        return [gbp2(a), gbp2(applyTax(a, 20).gross), gbp2(rem.net), gbp2(rem.tax)];
+      })}
+    />
+  ),
 
   'cgpa-table': () => (
     <Table

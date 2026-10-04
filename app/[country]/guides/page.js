@@ -34,6 +34,13 @@ export async function generateMetadata({ params }) {
         'en-GB': 'https://maurya-tech.com/uk/guides',
       },
     },
+    openGraph: {
+      title: `Guides on Tax, Salary & Careers for ${market.name}`,
+      description: `Verified guides on taxes, salary structuring and careers for professionals in ${market.name}.`,
+      url: `https://maurya-tech.com/${normalized}/guides`,
+      type: 'website',
+      siteName: 'Maurya Technologies',
+    },
   };
 }
 

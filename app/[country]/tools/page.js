@@ -42,6 +42,13 @@ export async function generateMetadata({ params }) {
         'en-GB': 'https://maurya-tech.com/uk/tools',
       },
     },
+    openGraph: {
+      title: `Free Online Calculators & Financial Tools for ${market.name}`,
+      description: `Free salary, tax, EMI and everyday calculators for ${market.name}.`,
+      url: `https://maurya-tech.com/${normalized}/tools`,
+      type: 'website',
+      siteName: 'Maurya Technologies',
+    },
   };
 }
 

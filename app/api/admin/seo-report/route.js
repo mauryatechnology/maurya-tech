@@ -4,7 +4,7 @@ import Post from '@/lib/models/Post';
 import Country from '@/lib/models/Country';
 import { verifyToken, hasPermission, ROLES } from '@/lib/auth';
 import { defaultTools } from '@/data/tools';
-import { defaultGuides } from '@/data/guides';
+import { allGuides, defaultGuides } from '@/data/guides';
 import { toolContent } from '@/data/toolContent';
 import { defaultCountries } from '@/data/countries';
 import { runQualityGate } from '@/lib/content/qualityGate';
@@ -13,6 +13,7 @@ import { SALARY_SET_LIST } from '@/lib/programmatic/salary';
 import { GLOBAL_TOOL_SLUGS } from '@/lib/seo/related';
 import { ADS_ENABLED, ADSENSE_CLIENT } from '@/lib/ads/config';
 import { TAX_RULES } from '@/lib/tax';
+import { isMailConfigured } from '@/lib/emailService';
 
 const DAY = 86400000;
 const daysSince = (d) => (d ? Math.floor((Date.now() - new Date(d).getTime()) / DAY) : null);
@@ -48,6 +49,7 @@ export async function GET(req) {
     globalToolPages: GLOBAL_TOOL_SLUGS.length,
     countryToolPages,
     guides: defaultGuides.length,
+    guidesInReview: allGuides.length - defaultGuides.length,
     salaryPages,
     dbPublishedPosts: publishedPosts.length,
     dbPostsInReview: dbPosts.filter((p) => p.status === 'review').length,
@@ -62,8 +64,8 @@ export async function GET(req) {
   ].map((r) => ({ ...r, ageDays: daysSince(r.lastReviewed), stale: (daysSince(r.lastReviewed) ?? 9999) > 365 }));
 
   // Quality gate across guides + DB posts
-  const allKeywords = [...defaultGuides.map((g) => g.seo?.primaryKeyword), ...dbPosts.map((p) => p.primaryKeyword)];
-  const allTitles = [...defaultGuides.map((g) => g.seo?.title || g.title), ...dbPosts.map((p) => p.title)];
+  const allKeywords = [...allGuides.map((g) => g.seo?.primaryKeyword), ...dbPosts.map((p) => p.primaryKeyword)];
+  const allTitles = [...allGuides.map((g) => g.seo?.title || g.title), ...dbPosts.map((p) => p.title)];
   // Everything except this page's own single entry, so a page never "conflicts" with itself.
   const without = (arr, v) => {
     const i = arr.indexOf(v);
@@ -71,12 +73,12 @@ export async function GET(req) {
   };
   const others = (kw, title) => ({ otherKeywords: without(allKeywords, kw), otherTitles: without(allTitles, title) });
   const quality = [
-    ...defaultGuides.map((g) => {
+    ...allGuides.map((g) => {
       const q = runQualityGate(
         { ...g, faqSchema: g.seo?.faqSchema, primaryKeyword: g.seo?.primaryKeyword, lastReviewedAt: g.lastReviewed },
         others(g.seo?.primaryKeyword, g.seo?.title || g.title)
       );
-      return { source: 'static', slug: g.slug, title: g.title, score: q.score, passed: q.passed, failing: Object.entries(q.checks).filter(([, c]) => !c.passed).map(([k]) => k) };
+      return { source: g.status === 'review' ? 'static (in review — not live)' : 'static', slug: g.slug, title: g.title, score: q.score, passed: q.passed, failing: Object.entries(q.checks).filter(([, c]) => !c.passed).map(([k]) => k) };
     }),
     ...publishedPosts.map((p) => {
       const q = runQualityGate(p, others(p.primaryKeyword, p.title));
@@ -111,7 +113,8 @@ export async function GET(req) {
     { key: 'NEXT_PUBLIC_ADSENSE_SLOT_DEFAULT', ok: Boolean(process.env.NEXT_PUBLIC_ADSENSE_SLOT_DEFAULT), hint: 'A responsive display ad unit ID' },
     { key: 'GOOGLE_SITE_VERIFICATION', ok: Boolean(process.env.GOOGLE_SITE_VERIFICATION), hint: 'Search Console HTML-tag token (or verify via DNS)' },
     { key: 'BING_SITE_VERIFICATION', ok: Boolean(process.env.BING_SITE_VERIFICATION), hint: 'Bing Webmaster Tools msvalidate.01 token' },
-    { key: 'INDEXNOW_KEY', ok: Boolean(process.env.INDEXNOW_KEY), hint: 'Random 32+ char hex key for IndexNow pings' },
+    { key: 'INDEXNOW_KEY', ok: /^[a-zA-Z0-9-]{32,128}$/.test(process.env.INDEXNOW_KEY || ''), hint: 'Random 32+ char hex key for IndexNow pings' },
+    { key: 'SMTP_USER / SMTP_PASS', ok: isMailConfigured, hint: 'Needed for tax-alert double opt-in emails (without it sign-ups are stored as confirmed)' },
     ...countries.map((c) => ({ key: `Market ${c.code} ad network (${c.source})`, ok: c.adNetwork === 'adsense', hint: `Currently "${c.adNetwork}" — set to adsense in /admin/markets` })),
   ];
 

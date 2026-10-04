@@ -53,7 +53,8 @@ export async function POST(req) {
   try {
     await connectToDatabase();
     const existing = await Subscriber.findOne({ email });
-    if (existing?.status === 'subscribed') return ok(false);
+    // Same response a new sign-up gets, so the form cannot be used to test addresses.
+    if (existing?.status === 'subscribed') return ok(isMailConfigured);
 
     const token = crypto.randomBytes(24).toString('hex');
     const status = isMailConfigured ? 'pending' : 'subscribed';
@@ -76,7 +77,7 @@ export async function POST(req) {
     if (status === 'pending') {
       const confirmUrl = `${SITE_URL}/api/newsletter/confirm?token=${token}`;
       const unsubUrl = `${SITE_URL}/api/newsletter/unsubscribe?token=${token}`;
-      await sendMail({
+      const sent = await sendMail({
         to: email,
         subject: 'Confirm your tax-change alerts — Maurya Tech',
         html: `<div style="font-family:Arial,sans-serif;max-width:560px;margin:auto">
@@ -86,6 +87,9 @@ export async function POST(req) {
           <p style="color:#64748b;font-size:12px">If you did not request this, ignore this email or <a href="${unsubUrl}">remove your address</a>.</p>
         </div>`,
       });
+      if (!sent) {
+        return NextResponse.json({ success: false, message: 'We could not send the confirmation email. Please try again later.' }, { status: 502 });
+      }
     }
     return ok(status === 'pending');
   } catch (err) {

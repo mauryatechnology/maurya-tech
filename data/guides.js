@@ -1,8 +1,11 @@
-export const defaultGuides = [
+import { guidesBatch2 } from './guidesBatch2.js';
+import { guidesBatch3 } from './guidesBatch3.js';
+
+export const allGuides = [
   {
     slug: '2026-budget-new-tax-regime-guide',
-    title: 'New Tax Regime FY 2025-26: Slabs, ₹12 Lakh Rebate & In-Hand Salary (Worked Examples)',
-    excerpt: 'New tax regime slabs for FY 2025-26 (AY 2026-27), the ₹75,000 standard deduction, the ₹12 lakh Section 87A rebate, marginal relief, and exact in-hand salary for CTCs from ₹8 to ₹25 lakh.',
+    title: 'New Tax Regime FY 2026-27: Slabs, ₹12 Lakh Rebate & In-Hand Salary (Worked Examples)',
+    excerpt: 'New tax regime slabs for FY 2026-27 (AY 2027-28), the ₹75,000 standard deduction, the ₹12 lakh Section 87A rebate, marginal relief, and exact in-hand salary for CTCs from ₹8 to ₹25 lakh.',
     country: 'IN',
     language: 'en-IN',
     category: 'Taxes & Salary',
@@ -14,19 +17,19 @@ export const defaultGuides = [
     authorRole: 'Founder & Lead Engineer, Maurya Technologies',
     readTime: '9 min read',
     date: '2026-02-15',
-    lastReviewed: '2026-09-28',
+    lastReviewed: '2026-10-04',
     sources: [
       { name: 'Income Tax Department of India', url: 'https://www.incometax.gov.in/' },
       { name: 'Union Budget 2025-26 documents', url: 'https://www.indiabudget.gov.in/' },
       { name: 'EPFO', url: 'https://www.epfindia.gov.in/' },
     ],
     seo: {
-      title: 'New Tax Regime FY 2025-26: Slabs, ₹12L Rebate, In-Hand Pay',
-      description: 'New regime slabs for FY 2025-26, ₹75,000 standard deduction, ₹12 lakh 87A rebate and marginal relief — with in-hand salary worked out for ₹8–25 lakh CTC.',
-      primaryKeyword: 'new tax regime slabs fy 2025-26',
+      title: 'New Tax Regime FY 2026-27: Slabs, ₹12L Rebate, In-Hand Pay',
+      description: 'New regime slabs for FY 2026-27, ₹75,000 standard deduction, ₹12 lakh 87A rebate and marginal relief — with in-hand salary worked out for ₹8–25 lakh CTC.',
+      primaryKeyword: 'new tax regime slabs fy 2026-27',
       faqSchema: [
         {
-          question: 'What are the new tax regime slabs for FY 2025-26?',
+          question: 'What are the new tax regime slabs for FY 2026-27?',
           answer: 'Nil up to ₹4 lakh, 5% from ₹4–8 lakh, 10% from ₹8–12 lakh, 15% from ₹12–16 lakh, 20% from ₹16–20 lakh, 25% from ₹20–24 lakh and 30% above ₹24 lakh, plus 4% cess.',
         },
         {
@@ -50,7 +53,7 @@ export const defaultGuides = [
     content: `
 ## The short answer
 
-For **FY 2025-26 (assessment year 2026-27)** the new tax regime is the default for salaried employees. Three numbers matter most:
+For **FY 2026-27 (assessment year 2027-28)** the new tax regime is the default for salaried employees. Three numbers matter most:
 
 - **₹75,000 standard deduction** — subtracted from your gross salary automatically, no proof needed.
 - **₹12 lakh rebate limit** — if your taxable income is ₹12,00,000 or less, the Section 87A rebate (up to ₹60,000) wipes out your income tax completely.
@@ -60,7 +63,7 @@ Above ₹12 lakh, tax is charged from the first rupee on the slabs below, but **
 
 ---
 
-## New tax regime slabs for FY 2025-26
+## New tax regime slabs for FY 2026-27
 
 | Taxable income | Tax rate | Tax on the full slab |
 |---|---|---|
@@ -74,7 +77,7 @@ Above ₹12 lakh, tax is charged from the first rupee on the slabs below, but **
 
 A **4% health and education cess** is added to the tax. A **surcharge** applies above ₹50 lakh (10%), ₹1 crore (15%) and ₹2 crore (25% — the maximum under the new regime).
 
-These slabs were introduced by the Union Budget 2025-26 and replaced the earlier structure (nil up to ₹3 lakh and a ₹7 lakh rebate limit). If you see the older numbers on other sites or in old offer-letter calculators, they are out of date.
+These slabs were introduced by the Union Budget 2025-26, were left unchanged by the Union Budget 2026-27, and replaced the earlier structure (nil up to ₹3 lakh and a ₹7 lakh rebate limit). If you see the older numbers on other sites or in old offer-letter calculators, they are out of date.
 
 ---
 
@@ -135,6 +138,43 @@ If your employer contributes on your full basic instead, your in-hand pay falls 
 
 ---
 
+## Employer NPS: the one big deduction left in the new regime
+
+Almost every deduction disappears under the new regime, but your **employer's contribution to NPS under Section 80CCD(2)** survives — up to **14% of basic pay plus DA**. If your employer lets you restructure part of your CTC into employer NPS, your taxable income falls by the same amount.
+
+Take a ₹20 lakh CTC with ₹10 lakh basic. Moving ₹1,40,000 (14% of basic) into employer NPS cuts taxable income from ₹19,03,400 to ₹17,63,400 and income tax from **₹1,87,907 to ₹1,58,787 — a saving of ₹29,120 a year**. The catch: that money is locked in NPS until retirement, and part of the corpus must then be used to buy an annuity (check PFRDA's current exit rules). Total employer contributions to PF, NPS and superannuation above ₹7.5 lakh a year are taxable, which only matters for very high earners.
+
+---
+
+## How your employer deducts TDS every month
+
+Your employer estimates your tax for the whole year from your salary and the regime you declared, then deducts it in equal monthly instalments. If your pay changes mid-year — a raise, a bonus, arrears — the remaining months' TDS is recalculated, which is why the deduction can jump in February or March.
+
+If you **change jobs**, give your new employer your earlier salary and TDS for the year (Form 12B or a declaration). Otherwise both employers apply the rebate and lower slabs separately, too little tax is deducted, and you owe the balance when you file. If you declared the **old regime**, expect to submit rent receipts and investment proofs between January and March; without them the employer deducts tax as if you had no deductions.
+
+---
+
+## High incomes: surcharge and marginal relief
+
+Above ₹50 lakh of taxable income a surcharge is added to the tax, but **marginal relief** stops the surcharge from costing more than the income that crossed the threshold.
+
+| Taxable income | Surcharge | Total tax (incl. cess) |
+|---|---|---|
+| ₹50,00,000 | ₹0 | ₹11,23,200 |
+| ₹50,50,000 | ₹35,000 (after relief; a flat 10% would be ₹1,09,500) | ₹11,75,200 |
+| ₹55,00,000 | ₹1,23,000 | ₹14,07,120 |
+| ₹1,01,00,000 | ₹3,28,000 (after relief) | ₹30,55,520 |
+
+At ₹50.5 lakh, the extra ₹50,000 of income can raise tax plus surcharge by at most ₹50,000 before cess — so relief brings the surcharge down from ₹1,09,500 to ₹35,000.
+
+---
+
+## The new Income-tax Act, 2025
+
+From **1 April 2026** the Income-tax Act, 2025 replaces the Income-tax Act, 1961. It replaces "previous year" and "assessment year" with a single **tax year** and renumbers most sections, so Section 87A, 80C and 10(13A) have new numbers in the law. The Union Budget 2026-27 kept the new-regime slabs, the ₹75,000 standard deduction and the ₹12 lakh rebate unchanged for FY 2026-27, so the numbers in this guide are the same under both Acts. Payslips, Form 16 and most employers still use the familiar section numbers during the changeover.
+
+---
+
 ## Common mistakes when reading a salary offer
 
 - **Dividing CTC by 12.** It ignores employer PF, gratuity and insurance that are part of CTC but never paid monthly.
@@ -152,7 +192,7 @@ Every figure in this guide comes from the same engine as our calculator. Enter y
 
 Or jump straight to a ready-made breakdown: [₹10 LPA](/in/salary/10-lpa-in-hand-salary) · [₹12 LPA](/in/salary/12-lpa-in-hand-salary) · [₹15 LPA](/in/salary/15-lpa-in-hand-salary) · [₹20 LPA](/in/salary/20-lpa-in-hand-salary) · [₹25 LPA](/in/salary/25-lpa-in-hand-salary)
 
-*Rates reviewed on 28 September 2026 against Income Tax Department and Budget 2025-26 documents. Tax rules change with each Union Budget — check the latest notification before filing.*
+*Rates reviewed on 4 October 2026 against Income Tax Department and Budget 2025-26 and 2026-27 documents. Tax rules change with each Union Budget — check the latest notification before filing.*
 
     `,
   },
@@ -168,7 +208,7 @@ Or jump straight to a ready-made breakdown: [₹10 LPA](/in/salary/10-lpa-in-han
     author: 'Maurya Technologies Editorial Team',
     authorSlug: 'editorial-team',
     reviewerSlug: 'kuldeep-maurya',
-    lastReviewed: '2026-09-28',
+    lastReviewed: '2026-10-04',
     authorRole: 'Research & Review',
     readTime: '8 min read',
     date: '2026-01-20',
@@ -184,7 +224,7 @@ Or jump straight to a ready-made breakdown: [₹10 LPA](/in/salary/10-lpa-in-han
       primaryKeyword: 'w2 vs 1099 tax comparison',
       faqSchema: [
         { question: 'What is the self-employment tax rate in 2026?', answer: '15.3% — 12.4% Social Security (up to the $184,500 wage base) and 2.9% Medicare — applied to 92.35% of net self-employment earnings. Half of it is deductible.' },
-        { question: 'Do 1099 contractors take home less than W-2 employees?', answer: 'At the same gross pay, yes. At $100,000, a single W-2 employee keeps about $79,180 after federal tax and FICA versus about $74,255 for a contractor, before business deductions and state tax.' },
+        { question: 'Do 1099 contractors take home less than W-2 employees?', answer: 'At the same gross pay, yes. At $100,000, a single W-2 employee keeps about $79,180 after federal tax and FICA versus about $77,635 for a contractor (after the 20% QBI deduction), before business expenses and state tax.' },
         { question: 'How much higher should a 1099 rate be than a W-2 wage?', answer: 'Many contractors start at 1.25× to 1.5× the equivalent W-2 hourly rate to cover the employer half of FICA, benefits, paid leave and unbilled time.' },
         { question: 'Do 1099 contractors have to pay quarterly taxes?', answer: 'Generally yes. Without withholding, contractors usually pay estimated tax four times a year with Form 1040-ES to avoid underpayment penalties.' },
         { question: 'Can I choose to be a 1099 contractor?', answer: 'Classification depends on the actual working relationship — control over how, when and where work is done — not only on the contract label.' },
@@ -214,13 +254,13 @@ At the same headline pay, a contractor takes home less. That is why contract rat
 
 ## How much you actually take home (2026, single filer, before state tax)
 
-These figures use the 2026 federal brackets, the $16,100 standard deduction, and the Social Security wage base of $184,500. For contractors, half of self-employment tax is deducted before income tax, as the IRS allows.
+These figures use the 2026 federal brackets, the $16,100 standard deduction, and the Social Security wage base of $184,500. For contractors, half of self-employment tax is deducted before income tax, and the 20% qualified business income (QBI) deduction is applied, as the IRS allows.
 
 | Gross income | W-2 take-home | 1099 take-home | Difference |
 |---|---|---|---|
-| $60,000 | $50,390 | $47,011 | $3,379 |
-| $100,000 | $79,180 | $74,255 | $4,925 |
-| $150,000 | $113,791 | $106,615 | $7,176 |
+| $60,000 | $50,390 | $47,963 | $2,427 |
+| $100,000 | $79,180 | $77,635 | $1,545 |
+| $150,000 | $113,791 | $112,392 | $1,399 |
 
 The contractor column is **before** business deductions. Real expenses — a laptop, software, a home office, health-insurance premiums (often deductible for the self-employed) — reduce taxable income and narrow the gap.
 
@@ -233,18 +273,50 @@ For a contractor earning $100,000 net:
 1. **Self-employment base:** $100,000 × 92.35% = $92,350
 2. **Self-employment tax:** $92,350 × 15.3% = **$14,130** (12.4% Social Security + 2.9% Medicare)
 3. **Deduct half:** $7,065 comes off income before federal income tax
-4. **Taxable income:** $100,000 − $7,065 − $16,100 standard deduction = $76,835
-5. **Federal income tax:** about **$11,616**
+4. **Income before the QBI deduction:** $100,000 − $7,065 − $16,100 standard deduction = $76,835
+5. **QBI deduction:** 20% of the lower of qualified business income ($100,000 − $7,065 = $92,935) and taxable income before QBI ($76,835) = **$15,367**
+6. **Taxable income:** $76,835 − $15,367 = $61,468
+7. **Federal income tax:** about **$8,235**
 
-The same $100,000 as a W-2 salary produces $7,650 of FICA and $13,170 of federal income tax. The contractor pays less income tax (thanks to the deduction) but much more payroll tax.
+The same $100,000 as a W-2 salary produces $7,650 of FICA and $13,170 of federal income tax. The contractor pays much less income tax (thanks to the SE-tax and QBI deductions) but much more payroll tax.
 
 Social Security tax stops once earnings pass the annual wage base ($184,500 in 2026); Medicare does not, and an extra 0.9% Additional Medicare Tax applies above $200,000.
+
+---
+
+## The QBI deduction: why contractors keep more than you might expect
+
+Since 2018, most self-employed people can deduct up to **20% of their qualified business income** under Section 199A, and the One Big Beautiful Bill Act made the deduction permanent. For a sole proprietor, qualified business income is roughly net profit minus the deductible half of self-employment tax, self-employed health insurance and retirement contributions. The deduction is capped at 20% of taxable income before the deduction, which is why it is $15,367 rather than $18,587 in the $100,000 example.
+
+For 2026, single filers with taxable income up to **$201,750** ($403,500 married filing jointly) get the full deduction whatever their line of work. Above that, the deduction phases out for "specified service" businesses — consulting, health, law, accounting, financial services, performing arts and similar — and becomes limited by wages paid and property held for other businesses; for a one-person consultancy it disappears completely by $276,750 of taxable income. The QBI deduction reduces income tax only; it does not reduce self-employment tax.
+
+---
+
+## Retirement savings for contractors
+
+Losing an employer 401(k) match hurts, but contractors have generous alternatives:
+
+| Plan | How much you can put in (2026) | Good for |
+|---|---|---|
+| Solo 401(k) | $24,500 as "employee" plus up to 20% of net self-employment earnings as "employer", up to $72,000 in total (plus catch-up from age 50) | Highest contributions at moderate incomes; Roth option |
+| SEP IRA | Up to 20% of net self-employment earnings, up to $72,000 | Simple to open and run |
+| Traditional or Roth IRA | $7,500 (plus $1,100 catch-up from age 50) | Anyone with earned income |
+
+For the $100,000 contractor above, net self-employment earnings for the calculation are $92,935, so a Solo 401(k) could take $24,500 plus 20% × $92,935 = $18,587 — about **$43,087** in total, all deductible if made as traditional contributions. A SEP IRA would allow only the $18,587. Use the [401(k) calculator](/us/tools/401k-calculator) to see how either amount could grow.
+
+---
+
+## Health insurance and other benefits
+
+A W-2 job often includes subsidised health insurance worth several thousand dollars a year, plus paid holidays, sick leave and sometimes disability and life cover. Contractors pay for all of these themselves. Health insurance premiums for you, your spouse and dependants are usually deductible as an adjustment to income (the self-employed health insurance deduction), provided you are not eligible for an employer plan through another job or a spouse's job. Marketplace plans under the Affordable Care Act may come with premium tax credits depending on household income. When you compare offers, price these benefits explicitly rather than looking only at the headline pay.
 
 ---
 
 ## Quarterly estimated taxes
 
 Because nothing is withheld, contractors generally must pay estimated tax four times a year (mid-April, mid-June, mid-September and mid-January) using Form 1040-ES. Underpaying can trigger a penalty. A common approach is to move 25–30% of every invoice into a separate tax account the day it is paid.
+
+You avoid the underpayment penalty if your estimated payments cover at least **90% of this year's tax** or **100% of last year's tax** (110% if last year's adjusted gross income was over $150,000). In your first year of contracting, basing payments on last year's total tax as an employee is often the simplest safe harbor — any balance is then due by the April filing deadline, without a penalty.
 
 ---
 
@@ -268,6 +340,23 @@ A full-time year is 2,080 hours (40 hours × 52 weeks). See a full breakdown, in
 
 ---
 
+## State taxes for contractors
+
+State income tax treats contractors and employees much the same: the same brackets and deductions apply to your net self-employment income as to wages. Two differences matter. First, nothing is withheld, so state estimated payments are usually due on a similar quarterly schedule to the federal ones. Second, some cities and states tax business income separately — for example New York City's unincorporated business tax and Philadelphia's business income and receipts tax — so check local rules before you sign. Our [paycheck calculator](/us/tools/us-paycheck-calculator) shows how much each state takes from a W-2 salary for comparison.
+
+---
+
+## Checklist before accepting a 1099 contract
+
+- Convert the rate to an annual figure at realistic billable hours — rarely 2,080; 1,600–1,800 is common after holidays, sickness and gaps between contracts.
+- Subtract the extra 7.65% self-employment tax and the cost of health insurance, retirement savings and paid time off.
+- Check whether you qualify for the full QBI deduction at your expected income.
+- Set aside 25–30% of every payment for federal and state taxes and pay estimates quarterly.
+- Keep receipts and a separate business bank account so expenses are easy to claim.
+- Confirm the working relationship really is independent; if it looks like employment, ask why it is not W-2.
+
+---
+
 ## Is it your choice?
 
 Not entirely. Whether you are an employee or a contractor depends on the working relationship — behavioural control, financial control and how the relationship is structured — not just on what the contract says. Misclassification can leave workers without protections and employers with back taxes. If a client controls your hours, tools and methods like an employer would, ask whether W-2 employment is the correct status.
@@ -278,7 +367,7 @@ Not entirely. Whether you are an employee or a contractor depends on the working
 
 👉 **[Hourly to Annual Salary & Tax Calculator](/us/tools/hourly-to-annual-salary)** — switch between W-2 and 1099 and add your state tax rate.
 
-*Figures reviewed on 28 September 2026 against IRS 2026 inflation adjustments and the SSA wage base. This is general information, not tax advice.*
+*Figures reviewed on 4 October 2026 against IRS 2026 inflation adjustments (Rev. Proc. 2025-32) and the SSA wage base. This is general information, not tax advice.*
 
     `,
   },
@@ -294,7 +383,7 @@ Not entirely. Whether you are an employee or a contractor depends on the working
     author: 'Maurya Technologies Editorial Team',
     authorSlug: 'editorial-team',
     reviewerSlug: 'kuldeep-maurya',
-    lastReviewed: '2026-09-28',
+    lastReviewed: '2026-10-04',
     authorRole: 'Research & Review',
     readTime: '8 min read',
     date: '2026-03-01',
@@ -378,7 +467,60 @@ Standard 1257L tax code, no pension, student loan or benefits in kind:
 - National Insurance: £37,700 × 8% + £9,730 × 2% = **£3,211**
 - **Take-home: £45,357 a year (£3,780 a month)**
 
-See detailed breakdowns for [£30,000](/uk/salary/30000-after-tax), [£40,000](/uk/salary/40000-after-tax), [£50,000](/uk/salary/50000-after-tax), [£60,000](/uk/salary/60000-after-tax) or [every salary from £20k to £70k](/uk/salary).
+See detailed breakdowns for [£30,000](/uk/salary/30000-after-tax), [£40,000](/uk/salary/40000-after-tax), [£50,000](/uk/salary/50000-after-tax), [£60,000](/uk/salary/60000-after-tax) or [every salary from £15k to £100k](/uk/salary).
+
+---
+
+## The 60% trap between £100,000 and £125,140
+
+Because the Personal Allowance is withdrawn above £100,000, earnings in this range are taxed at 40% plus the tax on the lost allowance — an effective **60% Income Tax rate**, or 62% with National Insurance.
+
+| Salary | Personal Allowance | Income Tax | National Insurance | Take-home |
+|---|---|---|---|---|
+| £100,000 | £12,570 | £27,432 | £4,011 | £68,557 |
+| £110,000 | £7,570 | £33,432 | £4,211 | £72,357 |
+| £125,140 | £0 | £42,516 | £4,513 | £78,111 |
+
+A £10,000 pay rise from £100,000 to £110,000 adds only **£3,800** to take-home pay. Turn it round and the same £10,000 paid into a pension through salary sacrifice costs a £110,000 earner just £3,800 of take-home pay — one of the most generous tax reliefs in the system. Parents in this range may also lose tax-free childcare and some free childcare hours, which makes the trap even steeper.
+
+---
+
+## How PAYE spreads tax across the year
+
+PAYE normally works on a **cumulative** basis. Each month your employer gives you 1/12 of your Personal Allowance and each tax band, compares the tax due on your pay so far this tax year with the tax already deducted, and takes the difference. That is why:
+
+- if you start your first job partway through the year, your early payslips can show little or no tax — you have unused allowance from the months you were not working;
+- if your pay falls, a later payslip can include a **tax refund**;
+- a large bonus in one month is taxed at your marginal rate but not "over-taxed" for the year, because later months even it out.
+
+If your code ends in **W1** or **M1** (or "X" on your payslip), you are on a non-cumulative **emergency code**: each pay period is taxed on its own, and any overpayment is refunded at the end of the year or once HMRC sends your employer the right code.
+
+---
+
+## Tax codes in plain English
+
+| Code | What it means |
+|---|---|
+| 1257L | The standard Personal Allowance of £12,570 |
+| BR | All income taxed at the basic rate — usually a second job |
+| D0 / D1 | All income taxed at the higher or additional rate — usually a second job for higher earners |
+| 0T | No Personal Allowance — often when HMRC lacks your details or your allowance is used up |
+| K codes | Untaxed income or benefits exceed your allowance, so tax is added rather than deducted |
+| S or C prefix | Scottish or Welsh taxpayer rates |
+
+Check your code in the HMRC app or your personal tax account. A wrong code is the most common reason for paying the wrong amount of tax, especially after changing jobs or getting a company car.
+
+---
+
+## Child Benefit and the £60,000 threshold
+
+If you or your partner receive Child Benefit and either of you has adjusted net income above **£60,000**, the High Income Child Benefit Charge claws it back at 1% for every £200 of income above £60,000, so it is fully repaid at £80,000. It is based on the higher earner's income, not household income. Pension contributions reduce adjusted net income, so they can reduce or remove the charge as well as cutting Income Tax.
+
+---
+
+## What your employer pays on top
+
+Your employer also pays **employer National Insurance of 15%** on your earnings above £5,000 a year, plus at least 3% of qualifying earnings into your workplace pension. Neither comes out of your pay, but they are part of what you cost to employ — useful context when negotiating, and the reason salary sacrifice is popular with employers too: it lowers their National Insurance bill.
 
 ---
 
@@ -401,15 +543,41 @@ For higher earners near £100,000, pension contributions can restore the Persona
 
 ---
 
+## Scotland and Wales
+
+Scottish taxpayers pay Scottish Income Tax on earned income, with more bands than the rest of the UK — starter, basic, intermediate, higher, advanced and top rates — set each year by the Scottish Parliament. The Personal Allowance and National Insurance are the same everywhere in the UK, so a Scottish taxpayer's take-home pay differs only in the Income Tax line. Welsh taxpayers currently pay the same overall rates as England, although part of the tax goes to the Welsh Government. Your tax code starts with **S** in Scotland and **C** in Wales; if it does not match where you live, tell HMRC.
+
+---
+
+## Checklist: is your payslip right?
+
+- Your tax code is 1257L unless you have benefits, a second job or untaxed income.
+- Income Tax and National Insurance roughly match the tables above for your salary.
+- Pension contributions appear, and salary sacrifice reduces the gross pay used for tax and NI.
+- Student loan deductions use the right plan type.
+- Your year-to-date figures carry over correctly after a job change (check your P45).
+- At the end of the tax year your P60 totals agree with your last payslip.
+
+---
+
 ## Check your own take-home pay
 
-👉 **[UK Salary Calculator](/uk/tools/ctc-calculator)** · **[UK hourly wage calculator](/uk/tools/hourly-to-annual-salary)**
+👉 **[UK Salary Calculator](/uk/tools/ctc-calculator)** · **[Student loan repayment calculator](/uk/tools/student-loan-calculator)** · **[Mortgage calculator](/uk/tools/mortgage-calculator)** · **[UK hourly wage calculator](/uk/tools/hourly-to-annual-salary)**
 
-*Rates reviewed on 28 September 2026 against GOV.UK Income Tax and National Insurance guidance. This is general information, not tax or financial advice.*
+*Rates reviewed on 4 October 2026 against GOV.UK Income Tax and National Insurance guidance. This is general information, not tax or financial advice.*
 
     `,
   },
+  ...guidesBatch2,
+  ...guidesBatch3,
 ];
+
+/**
+ * Only published guides are routed, listed, linked and put in the sitemap. A guide with
+ * `status: 'review'` waits for a person to verify every number against the official
+ * source (plan §3.3); /admin/seo lists it, then flip it to 'published'.
+ */
+export const defaultGuides = allGuides.filter((g) => (g.status || 'published') === 'published');
 
 export function getGuidesForCountry(countryCode = 'IN') {
   const normalized = (countryCode || 'IN').toUpperCase();

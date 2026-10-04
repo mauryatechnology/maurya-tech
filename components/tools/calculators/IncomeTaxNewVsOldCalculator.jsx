@@ -73,7 +73,7 @@ export function IncomeTaxNewVsOldCalculator({ country = 'in', countryName = 'Ind
       countryName={countryName}
       toolName={tool?.name || 'Income Tax Calculator: New vs Old Regime'}
       category="salary"
-      badge="FY 2025-26 · both regimes"
+      badge="FY 2026-27 · both regimes"
       description="Compare your income tax under the new and old regimes side by side — with HRA, 80C, 80D, NPS and home-loan interest — and see which regime saves you more."
       resultSummaryText={summaryText}
     >

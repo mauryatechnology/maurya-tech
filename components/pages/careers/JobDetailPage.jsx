@@ -162,6 +162,18 @@ export const JobDetailPage = ({ job }) => {
                 </div>
               )}
 
+              {/* In-body links to the free career tools (plan §6.6) */}
+              <div className="p-6 md:p-8 rounded-3xl bg-muted/40 border border-border space-y-2">
+                <h2 className="text-lg font-heading font-bold text-foreground">Before you apply</h2>
+                <p className="text-sm text-foreground leading-relaxed">
+                  Run your resume through our free{' '}
+                  <Link href="/in/tools/ats-resume-checker" className="font-semibold text-accent hover:underline">ATS resume checker</Link>{' '}
+                  to see which of this role&apos;s keywords it is missing, and use the{' '}
+                  <Link href="/in/tools/ctc-calculator" className="font-semibold text-accent hover:underline">CTC to in-hand salary calculator</Link>{' '}
+                  to see what an offer is worth each month after tax and PF.
+                </p>
+              </div>
+
               {/* Benefits */}
               {job.benefits && job.benefits.length > 0 && (
                 <div className="p-6 md:p-8 rounded-3xl bg-muted/40 border border-border space-y-4">

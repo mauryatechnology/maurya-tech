@@ -6,6 +6,13 @@ import { CalculatorContainer } from '@/components/tools/CalculatorContainer';
 import { Receipt, Sparkles } from 'lucide-react';
 import { calcUsPaycheck, US_FILING_STATUS, US_STATES, PAY_FREQUENCIES, US_PAYROLL } from '@/lib/tax';
 
+// Alphabetical, with the free-entry "Other state" option last
+const STATE_OPTIONS = Object.entries(US_STATES)
+  .filter(([k]) => k !== 'OTHER')
+  .sort(([, a], [, b]) => a.name.localeCompare(b.name))
+  .map(([k, v]) => [k, v.name])
+  .concat([['OTHER', US_STATES.OTHER.name]]);
+
 const money = (n, d = 0) => `$${Number(n || 0).toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d })}`;
 
 function Select({ id, label, value, onChange, options, hint }) {
@@ -131,7 +138,7 @@ export function UsPaycheckCalculator({ country = 'us', countryName = 'United Sta
             value={state}
             onChange={setState}
             hint={st.dataYear}
-            options={Object.entries(US_STATES).map(([k, v]) => [k, v.name])}
+            options={STATE_OPTIONS}
           />
           {st.custom && (
             <NumericInput id="state-rate" label="State income tax rate" suffix="%" value={customRate} onChange={setCustomRate} step={0.1} max={15} />

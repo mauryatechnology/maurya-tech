@@ -11,7 +11,7 @@ export default function robots() {
           '/admin/*',
           '/api/',
           '/api/*',
-          '/_next/',
+          // Never block /_next/: Bing and other crawlers need its CSS/JS to render pages.
           '/_not-found',
         ],
       },

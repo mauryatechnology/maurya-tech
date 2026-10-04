@@ -9,7 +9,7 @@ import { Menu, X, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
-// Consolidated navigation structure - Industry standard 6 main items
+// Consolidated navigation structure
 const navItems = [
   { name: 'Home', path: '/' },
   {
@@ -22,6 +22,7 @@ const navItems = [
   },
   { name: 'Projects', path: '/projects' },
   { name: 'Pricing', path: '/pricing' },
+  { name: 'Free Tools', path: '/tools' },
   {
     name: 'Company',
     children: [

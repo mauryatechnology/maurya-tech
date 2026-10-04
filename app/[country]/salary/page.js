@@ -15,18 +15,21 @@ export function generateStaticParams() {
 
 const COPY = {
   in: {
-    title: 'In-Hand Salary by CTC (4–25 LPA): New Regime FY 2025-26',
+    title: 'In-Hand Salary by CTC (4–25 LPA): New Regime FY 2026-27',
     h1: 'In-hand salary for every CTC',
+    description: 'Monthly in-hand salary for every CTC from 4 to 25 LPA under the new tax regime (FY 2026-27), with income tax, PF and professional tax shown.',
     intro: 'Pick your CTC to see monthly in-hand pay, income tax, PF and professional tax under the new tax regime. Every page shows the full calculation, not just the final number.',
   },
   us: {
     title: 'Salary to Hourly & Hourly to Salary Tables (2026)',
     h1: 'US salary and hourly wage breakdowns',
+    description: 'Hourly wage to yearly salary and salary to hourly tables for 2026, with take-home pay after federal tax and FICA by state and filing status.',
     intro: 'Convert an hourly wage to a yearly salary or a salary to an hourly rate, with take-home pay after 2026 federal tax and FICA — plus state and filing-status comparisons on every page.',
   },
   uk: {
     title: 'UK Salary After Tax Table: £15,000 to £100,000 (2026/27)',
     h1: 'UK take-home pay for every salary',
+    description: 'UK take-home pay for every salary from £15,000 to £100,000 after 2026/27 Income Tax and National Insurance — yearly, monthly and weekly.',
     intro: 'Pick a salary to see take-home pay per year, month and week after 2026/27 Income Tax and National Insurance.',
   },
 };
@@ -70,8 +73,9 @@ export async function generateMetadata({ params }) {
   if (!copy) return {};
   return {
     title: copy.title,
-    description: copy.intro.slice(0, 158),
+    description: copy.description,
     alternates: { canonical: absoluteUrl(`/${country}/salary`) },
+    openGraph: { title: copy.title, description: copy.description, url: absoluteUrl(`/${country}/salary`), type: 'website', siteName: 'Maurya Technologies' },
   };
 }
 

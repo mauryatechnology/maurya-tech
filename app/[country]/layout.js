@@ -24,22 +24,8 @@ export async function generateMetadata({ params }) {
       template: '%s | Maurya Tech',
     },
     description: market.seoRules?.defaultMetaDescription || `Free online calculators, salary estimators, and productivity tools customized for ${market.name}. Fast, privacy-focused, zero backend storage.`,
-    alternates: {
-      canonical: `/${normalized}`,
-      languages: {
-        'en-IN': '/in',
-        'en-US': '/us',
-        'en-GB': '/uk',
-        'x-default': '/in',
-      },
-    },
-    openGraph: {
-      title: `${market.name} Digital Utilities & Free Online Calculators | Maurya Technologies`,
-      description: `Accurate salary, tax, EMI, and productivity calculators localized for ${market.name}.`,
-      url: `https://maurya-tech.com/${normalized}`,
-      type: 'website',
-      siteName: `Maurya Technologies ${market.name}`,
-    },
+    // canonical/hreflang/og:url live on each page: anything set here is inherited by
+    // every child that does not override it, pointing those pages at the hub.
   };
 }
 
